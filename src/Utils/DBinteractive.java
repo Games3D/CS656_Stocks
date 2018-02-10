@@ -23,23 +23,19 @@ public class DBinteractive {
 	private StringBuilder ERRORS=new StringBuilder();
 
 	public DBinteractive() {
-		final String host="";
-		final String username="";
-		final String password="";
-
-		//TODO change IBM connection string to MySQL 
-		final String DRIVER = "com.ibm.as400.access.AS400JDBCDriver"; 
-		final String URL = "jdbc:as400://"+host+";naming=system";//jdbc:db2
+		/*Database credentials for AFS */
+		final String DB_URL ="jdbc:mysql://sql1.njit.edu/dp582";
+		final String USER = "np397";
+		final String PASS = "password";
 
 		try {
-			Class.forName(DRIVER); //making the connection
-			conn = DriverManager.getConnection(URL, username, password); 
-		} catch (ClassNotFoundException e) {
-			ERRORS.append("*"+e.getMessage()+"\n");
-			e.printStackTrace();
-		} catch (SQLException e) {
-			ERRORS.append("*Error creating alias: "+e.getMessage()+"\n");
-			e.printStackTrace();
+			//Register JDBC driver
+			Class.forName("com.mysql.jdbc.Driver");
+			//Open a connection
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DB_URL,USER,PASS);
+		} catch (SQLException | ClassNotFoundException e) {
+			System.out.println("Error while connecting to database");
 		}
 	}
 
