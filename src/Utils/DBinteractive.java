@@ -24,9 +24,9 @@ public class DBinteractive {
 
 	public DBinteractive() {
 		/*Database credentials for AFS */
-		final String DB_URL ="jdbc:mysql://sql1.njit.edu/dp582";
+		final String DB_URL ="jdbc:mysql://sql2.njit.edu/np397";
 		final String USER = "np397";
-		final String PASS = "password";
+		final String PASS = "9hmUj8UAX";
 
 		try {
 			//Register JDBC driver

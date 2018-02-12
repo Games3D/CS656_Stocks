@@ -20,7 +20,7 @@ public class Uploader {
 	public enum OPCODE{UPLOAD, DOWNLOAD};
 
 	public static void main(String[] args) {
-		//new Uploader("",Uploader.OPCODE.DOWNLOAD);
+		new Uploader("",Uploader.OPCODE.DOWNLOAD);
 		
 	}
 	
