@@ -24,6 +24,7 @@ public class Uploader {
 		
 	}
 	
+	@SuppressWarnings("unused")
 	public Uploader(String path, OPCODE op) {
 		DBinteractive DB= new DBinteractive();//DB connection
 		FILE=new File(path);//sets the file
@@ -106,6 +107,7 @@ public class Uploader {
 			e.printStackTrace();
 		}		
 	}
+	@SuppressWarnings("unused")
 	private void readCSV_quotes(){
 		ArrayList<String[]> lines = new ArrayList<String[]>();
 

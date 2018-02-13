@@ -16,6 +16,7 @@ public class Stock {
 		new Stock("GOOGL");
 	}
 
+	@SuppressWarnings("unused")
 	public Stock(String symbol) {
 
 		try {

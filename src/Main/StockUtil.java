@@ -1,16 +1,19 @@
 package Main;
 
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.text.SimpleDateFormat;
 
 /**
  * Javelet used to get stock infomation from the web
@@ -19,6 +22,7 @@ import java.text.SimpleDateFormat;
  *
  */
 
+@SuppressWarnings("serial")
 public class StockUtil extends HttpServlet {
 
 	enum OPCODE{TEST, STOCK_PRICE, STOCK_BUY, STOCK_SELL, UPLOAD, DOWNLOAD};
@@ -83,6 +87,7 @@ public class StockUtil extends HttpServlet {
 	    return queryParameters;
 	}
 
+	@SuppressWarnings("unused")
 	private static String GodSwitch(OPCODE op, String Param) throws SQLException {
 		String[] P=Param.split(",");
 		if (P.length<=0){

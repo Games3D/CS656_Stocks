@@ -10,37 +10,6 @@ import java.net.URLConnection;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
-/**
- * General test class used for testing anything we need to get from Yahoo
- * 
- * NOTE: please make separate methods for anything you do in here
- * 
- * @author Jared
- */
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Calendar;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import Utils.MyLogger;
-import yahoofinance.histquotes.HistQuotesRequest;
-import yahoofinance.histquotes.HistoricalQuote;
-import yahoofinance.histquotes.Interval;
-import yahoofinance.histquotes2.HistDividendsRequest;
-import yahoofinance.histquotes2.HistQuotes2Request;
-import yahoofinance.histquotes2.HistSplitsRequest;
-import yahoofinance.histquotes2.HistoricalDividend;
-import yahoofinance.histquotes2.HistoricalSplit;
-import yahoofinance.quotes.query1v7.StockQuotesQuery1V7Request;
-import yahoofinance.quotes.stock.StockDividend;
-import yahoofinance.quotes.stock.StockQuote;
-import yahoofinance.quotes.csv.StockQuotesData;
-import yahoofinance.quotes.csv.StockQuotesRequest;
-import yahoofinance.quotes.stock.StockStats;
-
 public class yahooTest {
 	//https://financequotes-api.com/
 	//http://blog.bradlucas.com/posts/2017-06-04-yahoo-finance-quote-download-java/
@@ -55,6 +24,7 @@ public class yahooTest {
 		//getStock("INTC");
 	}
 	
+	@SuppressWarnings("unused")
 	private static void getStock(String symbol) {  
 		String sym = symbol.toUpperCase();
 		double price = 0.0;
@@ -117,6 +87,7 @@ public class yahooTest {
 			e.printStackTrace();
 		}
 	}
+	@SuppressWarnings("unused")
 	private static void getStockQuote(String symbol) {
 		Stock stock = null;
 		try {
