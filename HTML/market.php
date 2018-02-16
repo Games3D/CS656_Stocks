@@ -48,11 +48,12 @@ new TradingView.widget({
   "hideideas": true
 });
 </script>
+<iframe src="https://feed.mikle.com/widget/v2/64655/" height="402px" align="right" width="30%" class="fw-iframe" scrolling="no" frameborder="0"></iframe>
 <!-- TradingView Widget END -->
 	</div>
 
 
-<iframe src="https://feed.mikle.com/widget/v2/64655/" height="402px" align="right" width="30%" class="fw-iframe" scrolling="no" frameborder="0"></iframe> 
+ 
 
 <!-- TradingView Widget BEGIN -->
 
@@ -60,6 +61,6 @@ new TradingView.widget({
 
 <!-- End of Currency Converter Script -->
 
-</div>
+
 </body>
 </html>
