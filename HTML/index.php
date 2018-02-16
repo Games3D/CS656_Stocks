@@ -5,19 +5,16 @@
 	<link rel="stylesheet" type="text/css" href="CSS/login.css">
 	
 	<?php require_once 'DBconnect.php';
-
 session_start();//removes old session
 session_unset(); 
 session_destroy();
 session_start();//starts new sessionkkkkk
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     if(!empty($_POST["username"]) && !empty($_POST["password"])) {
         $username = $_POST["username"];
         $password = $_POST["password"];
-		$result = $conn->query("SELECT * FROM np397.Members;");//https://www.w3schools.com/php/php_mysql_select.asp
-        
+		$result = $conn->query("SELECT * FROM SM_Users");//https://www.w3schools.com/php/php_mysql_select.asp
+
 		if (!$result) {
 			die('Invalid query: ' . mysql_error());
 			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
@@ -25,7 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 		
 		while ($row = $result->fetch_assoc()) {
-			if ($row['username'] == $username && $row['password'] == $password){
+
+			if ($row['Username'] == $username && $row['Password'] == $password){
 				$_SESSION["authenticated"] = 'true';
 				$_SESSION["USER"] = $row['username'];
 				//$conn->query("UPDATE joshua.users SET lastLogin='".date("m/d/Y: h:i:sa")."' where UserName='".$_SESSION["USER"]."';");
