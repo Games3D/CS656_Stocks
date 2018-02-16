@@ -32,7 +32,7 @@ if(!empty($_POST["register-user"])) {
 	//to use a hashes on the passwords use this:  md5($_POST["password"])
 	
 	if(!isset($error_message)) {
-		$query = "INSERT INTO np397.SM_Users (username, password, balance, email, phone_num, birth_date) VALUES('" . strtolower($_POST["username"]) . "', '" . strtolower($_POST["password"]) . "', '".'0' . "', '". strtolower($_POST["email"]) . "', '" . $_POST["phone_num"] . "', '" . $_POST["birth_date"] . "')";
+		$query = "INSERT INTO SM_Users (username, password, balance, email, phone_num, birth_date) VALUES('" . strtolower($_POST["username"]) . "', '" . strtolower($_POST["password"]) . "', '".'0' . "', '". strtolower($_POST["email"]) . "', '" . $_POST["phone_num"] . "', '" . $_POST["birth_date"] . "')";
 		$result = $conn->query($query);
 		if(!empty($result)) {
 			$error_message = "";
