@@ -1,6 +1,21 @@
 <?php
 //load the database configuration file
-include 'DBconnect.php';
+require_once 'DBconnect.php';
+
+	session_start();
+	echo($_SESSION["USER"]);
+	//resets error vars
+	unset($_SESSION['ERROR']);
+	unset($_SESSION['ERROR_PATH']);
+	
+	if ($_SESSION["authenticated"] == "" or (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800))){
+		session_unset(); 
+		session_destroy(); 
+		header("Location: index.php"); /* Redirect browser */
+		exit();
+	}
+	$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
+	
 echo("Got Into Here \n");
 if(isset($_POST['importSubmit'])){
     echo("Got Into Here2 \n");
@@ -14,20 +29,21 @@ if(isset($_POST['importSubmit'])){
             
             //skip first line
             fgetcsv($csvFile);
-            
+            echo($_SESSION["USER"]);
             //parse data from csv file line by line
             while(($line = fgetcsv($csvFile)) !== FALSE){
 				echo("Got Into Here4\n");
                 //check whether member already exists in database with same email
                 $prevQuery = "SELECT * FROM SM_Portfolio WHERE Username = '".$_SESSION["USER"]."'";
+				echo($prevQuery);
                 $prevResult = $db->query($prevQuery);
                 if($prevResult->num_rows > 0){
                     //update member data
-                    $db->query("UPDATE members SET StockName = '".$line[0]."', StockSymbol = '".$line[1]."', ListPrice = '".$line[2]."', MarketPrice = '".$line[3]."', OpenPrice = '".$line[4]."', ClosePrice = '".$line[5]."' WHERE Username = '".$_SESSION["USER"]."'");
+                    $db->query("UPDATE SM_Portfolio SET StockName = '".$line[0]."', StockSymbol = '".$line[1]."', ListPrice = '".$line[2]."', MarketPrice = '".$line[3]."', OpenPrice = '".$line[4]."', ClosePrice = '".$line[5]."'");
 					echo("Update String");
                 }else{
                     //insert member data into database
-                    $db->query("INSERT INTO members (StockName, StockSymbol, ListPrice, MarketPrice, OpenPrice, ClosePrice) VALUES ('".$line[0]."','".$line[1]."','".$line[2]."','".$line[3]."','".$line[3]."','".$line[4]."')");
+                    $db->query("INSERT INTO SM_Portfolio (StockName, StockSymbol, ListPrice, MarketPrice, OpenPrice, ClosePrice) VALUES ('".$line[0]."','".$line[1]."','".$line[2]."','".$line[3]."','".$line[3]."','".$line[4]."')");
 					echo("Insert String");
                 }
 				echo("finishef while");
