@@ -30,7 +30,6 @@ if(!empty($_POST["register-user"])) {
 
 	if(!isset($error_message)) {
 
-
 		if(isset($_POST["email"])){
 			$result = $conn->query("SELECT * FROM SM_Users WHERE Email = '".strtolower($_POST["email"])."'");
 		

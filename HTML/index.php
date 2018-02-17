@@ -10,6 +10,11 @@ session_unset();
 session_destroy();
 session_start();//starts new sessionkkkkk
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	if(empty($_POST["username"]) || empty($_POST["password"])){
+		$_SESSION["ERROR"] = 'Enter username and password!';
+		header('Location: Error.php');
+		
+	}
     if(!empty($_POST["username"]) && !empty($_POST["password"])) {
         $username = $_POST["username"];
         $password = $_POST["password"];
@@ -19,27 +24,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
 			header('Location: Error.php');
 		}
-		
 		while ($row = $result->fetch_assoc()) {
+			
 			if ($row['Username'] == $username && $row['Password'] == $password){
 				$_SESSION["authenticated"] = 'true';
 				$_SESSION["USER"] = $row['username'];
-				//$conn->query("UPDATE joshua.users SET lastLogin='".date("m/d/Y: h:i:sa")."' where UserName='".$_SESSION["USER"]."';");
-				header('Location: home.php');
 				$loggedin="true";
-				$isConfirmed = $row['Confirmed'];
+				$isConfirmed = $row["Confirmed"];
 			}
 		}
 		if (!isset($loggedin)){
 			$_SESSION["ERROR"] = 'Invalid credentials. Re-enter the credentials.';
 			header('Location: Error.php');
 		}
-		elseif($isConfirmed == '0'){
+		elseif($isConfirmed != 1){
 			$_SESSION["ERROR"] = 'Please confirm your email.';
 			header('Location: Error.php');
 		}else{
-			$_SESSION["ERROR"] = 'Username or password field were empty. Please try again.';
-			header('Location: Error.php');
+			header('Location: home.php');
 		}
 	}
 	$conn->close();
