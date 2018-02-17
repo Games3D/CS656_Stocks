@@ -14,7 +14,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $username = $_POST["username"];
         $password = $_POST["password"];
 		$result = $conn->query("SELECT * FROM SM_Users");//https://www.w3schools.com/php/php_mysql_select.asp
-
 		if (!$result) {
 			die('Invalid query: ' . mysql_error());
 			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
@@ -22,22 +21,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 		
 		while ($row = $result->fetch_assoc()) {
-
 			if ($row['Username'] == $username && $row['Password'] == $password){
 				$_SESSION["authenticated"] = 'true';
 				$_SESSION["USER"] = $row['username'];
 				//$conn->query("UPDATE joshua.users SET lastLogin='".date("m/d/Y: h:i:sa")."' where UserName='".$_SESSION["USER"]."';");
 				header('Location: home.php');
 				$loggedin="true";
+				$isConfirmed = $row['Confirmed'];
 			}
 		}
 		if (!isset($loggedin)){
 			$_SESSION["ERROR"] = 'No user was found or invalid password.';
 			header('Location: Error.php');
 		}
-	}else{
-		$_SESSION["ERROR"] = 'Username or password field were empty. Please try again.';
-		header('Location: Error.php');
+		elseif($isConfirmed == '0'){
+			$_SESSION["ERROR"] = 'Please confirm your email.';
+			header('Location: Error.php');
+		}else{
+			$_SESSION["ERROR"] = 'Username or password field were empty. Please try again.';
+			header('Location: Error.php');
+		}
 	}
 	$conn->close();
 } 

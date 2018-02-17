@@ -1,6 +1,5 @@
 <?php
 require_once("DBconnect.php");
-
 if(!empty($_POST["register-user"])) {
 	/* Form Required Field Validation */
 	foreach($_POST as $key=>$value) {
@@ -13,7 +12,6 @@ if(!empty($_POST["register-user"])) {
 	if($_POST['password'] != $_POST['confirm_password']){ 
 	$error_message = 'Passwords should be same<br>'; 
 	}
-
 	/* Email Validation */
 	if(!isset($error_message)) {
 		if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
@@ -21,22 +19,56 @@ if(!empty($_POST["register-user"])) {
 		}
 	}
 	
-
 	/* Validation to check if Terms and Conditions are accepted */
 	if(!isset($error_message)) {
 		if(!isset($_POST["terms"])) {
 		$error_message = "Accept Terms and Conditions to Register";
 		}
 	}
-
 	//to use a hashes on the passwords use this:  md5($_POST["password"])
 	
 	if(!isset($error_message)) {
-		$query = "INSERT INTO SM_Users (username, password, balance, email, phone_num, birth_date) VALUES('" . strtolower($_POST["username"]) . "', '" . strtolower($_POST["password"]) . "', '".'0' . "', '". strtolower($_POST["email"]) . "', '" . $_POST["phone_num"] . "', '" . $_POST["birth_date"] . "')";
+		$query = "INSERT INTO SM_Users (username, password, balance, email, phone_num, birth_date, confirmed) VALUES('" . strtolower($_POST["username"]) . "', '" . strtolower($_POST["password"]) . "', '".'0' . "', '". strtolower($_POST["email"]) . "', '" . $_POST["phone_num"] . "', '" . $_POST["birth_date"] . "', '" . '0' . "')";
 		$result = $conn->query($query);
 		if(!empty($result)) {
 			$error_message = "";
 			$success_message = "You have registered successfully!";	
+
+
+
+			require_once 'PHPMailer/PHPMailerAutoload.php';
+    
+			$mail = new PHPMailer();
+
+		    $mail->Host = "smtp.gmail.com";
+
+		    $mail->SMTPAuth = true;
+
+		    $mail->Username = "CS673SchoolProject@gmail.com";
+
+		    $mail->Password = "schoolproject";
+
+		    $mail->SMTPSecure = 'ssl';
+
+		    $mail->Port = 465;
+
+		    //Change the email Subject
+		    $mail->Subject = 'Stock Market Account Confirmation';
+
+		    //Change the body message REPLACE THE LINK WITH CHRIS' (or whoevers we are going to use for demo) LINK
+		    $mail->Body = 'Please confirm your account. Click on the link to confirm your account https://web.njit.edu/~np397/StockMarketTest/confirm.php';
+
+		    $mail->setFrom('CS673SchoolProject@gmail.com', 'CS673Project');
+
+		    //Replace parameters with email and username of user
+		    $mail->addAddress(strtolower($_POST["email"]), strtolower($_POST["username"]));
+
+		    if (!$mail->send()) {
+		        echo "Mailer Error: " . $mail->ErrorInfo;
+		    } else {
+		         echo "Message sent";
+		       
+		    }
 			header('Location: index.php');
 			unset($_POST);
 		} else {
