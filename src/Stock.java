@@ -1,10 +1,9 @@
-package Main;
+
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
-import Utils.CurrencyConverter;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 
