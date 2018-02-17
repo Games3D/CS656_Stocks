@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			}
 		}
 		if (!isset($loggedin)){
-			$_SESSION["ERROR"] = 'No user was found or invalid password.';
+			$_SESSION["ERROR"] = 'Invalid credentials. Re-enter the credentials.';
 			header('Location: Error.php');
 		}
 		elseif($isConfirmed == '0'){

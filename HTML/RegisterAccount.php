@@ -27,53 +27,66 @@ if(!empty($_POST["register-user"])) {
 	}
 	//to use a hashes on the passwords use this:  md5($_POST["password"])
 	
+
 	if(!isset($error_message)) {
-		$query = "INSERT INTO SM_Users (username, password, balance, email, phone_num, birth_date, confirmed) VALUES('" . strtolower($_POST["username"]) . "', '" . strtolower($_POST["password"]) . "', '".'0' . "', '". strtolower($_POST["email"]) . "', '" . $_POST["phone_num"] . "', '" . $_POST["birth_date"] . "', '" . '0' . "')";
-		$result = $conn->query($query);
-		if(!empty($result)) {
-			$error_message = "";
-			$success_message = "You have registered successfully!";	
 
 
+		if(isset($_POST["email"])){
+			$result = $conn->query("SELECT * FROM SM_Users WHERE Email = '".strtolower($_POST["email"])."'");
+		
+			$rowcount=mysqli_num_rows($result);
 
-			require_once 'PHPMailer/PHPMailerAutoload.php';
-    
-			$mail = new PHPMailer();
+			if ($rowcount > 0) {
+				$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+				$error_message = "Email address already exists. Try Again!";
+			}else{
 
-		    $mail->Host = "smtp.gmail.com";
+				$query = "INSERT INTO SM_Users (username, password, balance, email, phone_num, birth_date, confirmed) VALUES('" . strtolower($_POST["username"]) . "', '" . strtolower($_POST["password"]) . "', '".'0' . "', '". strtolower($_POST["email"]) . "', '" . $_POST["phone_num"] . "', '" . $_POST["birth_date"] . "', '" . '0' . "')";
+				$result = $conn->query($query);
+				if(!empty($result)) {
+					$error_message = "";
+					$success_message = "You have registered successfully!";	
 
-		    $mail->SMTPAuth = true;
+					require_once 'PHPMailer/PHPMailerAutoload.php';
+		    
+					$mail = new PHPMailer();
 
-		    $mail->Username = "CS673SchoolProject@gmail.com";
+				    $mail->Host = "smtp.gmail.com";
 
-		    $mail->Password = "schoolproject";
+				    $mail->SMTPAuth = true;
 
-		    $mail->SMTPSecure = 'ssl';
+				    $mail->Username = "CS673SchoolProject@gmail.com";
 
-		    $mail->Port = 465;
+				    $mail->Password = "schoolproject";
 
-		    //Change the email Subject
-		    $mail->Subject = 'Stock Market Account Confirmation';
+				    $mail->SMTPSecure = 'ssl';
 
-		    //Change the body message REPLACE THE LINK WITH CHRIS' (or whoevers we are going to use for demo) LINK
-		    $mail->Body = 'Please confirm your account. Click on the link to confirm your account https://web.njit.edu/~np397/StockMarketTest/confirm.php';
+				    $mail->Port = 465;
 
-		    $mail->setFrom('CS673SchoolProject@gmail.com', 'CS673Project');
+				    //Change the email Subject
+				    $mail->Subject = 'Stock Market Account Confirmation';
 
-		    //Replace parameters with email and username of user
-		    $mail->addAddress(strtolower($_POST["email"]), strtolower($_POST["username"]));
+				    //Change the body message REPLACE THE LINK WITH CHRIS' (or whoevers we are going to use for demo) LINK
+				    $mail->Body = 'Please confirm your account. Click on the link to confirm your account https://web.njit.edu/~np397/StockMarketTest/confirm.php?user='.strtolower($_POST["username"]);
 
-		    if (!$mail->send()) {
-		        echo "Mailer Error: " . $mail->ErrorInfo;
-		    } else {
-		         echo "Message sent";
-		       
-		    }
-			header('Location: index.php');
-			unset($_POST);
-		} else {
-			echo $query;
-			$error_message = "Problem in registration. Try Again!";	
+				    $mail->setFrom('CS673SchoolProject@gmail.com', 'CS673Project');
+
+				    //Replace parameters with email and username of user
+				    $mail->addAddress(strtolower($_POST["email"]), strtolower($_POST["username"]));
+
+				    if (!$mail->send()) {
+				        echo "Mailer Error: " . $mail->ErrorInfo;
+				    } else {
+				         echo "Message sent";
+				       
+				    }
+					//header('Location: index.php');
+					unset($_POST);
+				} else {
+					echo $query;
+					$error_message = "Username already Exist. Try Again!";	
+				}
+			}
 		}
 	}
 }
