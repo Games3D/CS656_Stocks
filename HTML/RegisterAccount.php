@@ -76,10 +76,7 @@ if(!empty($_POST["register-user"])) {
 
 				    if (!$mail->send()) {
 				        echo "Mailer Error: " . $mail->ErrorInfo;
-				    } else {
-				         echo "Message sent";
-				       
-				    }
+				    } 
 					//header('Location: index.php');
 					unset($_POST);
 				} else {
