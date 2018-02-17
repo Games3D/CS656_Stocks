@@ -4,10 +4,16 @@
 		
 		if (isset($_POST['BUY'])){
 			echo "BUYYYYYYYYYYY";
-			$query = "insert into np397.SM_Portfolio Where Username= '".$_SESSION["USER"]."';";
-			//INSERT INTO `np397`.`SM_Stocks` (`StockID`, `PortfolioID`, `StockSymbol`, `StockName`, `ListPrice`, `MarketCap`, `OpenPrice`, `ClosePrice`) VALUES (NULL, '1', 'kjh', 'hjkhjh', '987', '897', '889', '789'), (NULL, '2', 'hjg', 'yuyuy', '8989', '87', '987', '9889');
+			//do a select on stocks to make sure the is added already, if yes then move on, if no then add
+			//insert into transactions
+			$conn->query("INSERT INTO `np397`.`SM_Stocks` (`StockID`, `PortfolioID`, `StockSymbol`, `StockName`, `ListPrice`, `MarketCap`, `OpenPrice`, `ClosePrice`) VALUES (NULL, '1', 'HHH', 'hjkhjh', '987', '897', '889', '789');");
 		} elseif (isset($_POST['SELL'])){
+			//insert a sell transaction
+			//test to see if stock balance is 0, if yes then remove stock
 			echo "SELLLLLLLLLLL". $_GET["StockID"];
+		} elseif (isset($_POST['HISTORY'])){
+			//write page to display history of transactions for this stock
+			echo "HISTORYYYYYY". $_GET["StockID"];
 		}
 }
 

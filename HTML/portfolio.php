@@ -134,6 +134,7 @@ ini_set('display_startup_errors', TRUE);
     <th>Open Price</th>
     <th>Close Price</th>
 	<th>Sell?</th>
+	<th>View History</th>
   </tr>
 	</thead>
 	<tbody id="tbodyid">
@@ -155,6 +156,11 @@ ini_set('display_startup_errors', TRUE);
 	<td>
 		<form id="buy" method = "post" Action ="Buy_Sell.php?StockID=<?php echo $row['StockID']?>">
 			<input type="submit" name="SELL" value="Sell Stock">
+		</form>
+	</td>
+	<td>
+		<form id="buy" method = "post" Action ="Buy_Sell.php?StockID=<?php echo $row['StockID']?>">
+			<input type="submit" name="HISTORY" value="See History">
 		</form>
 	</td>
   </tr>
