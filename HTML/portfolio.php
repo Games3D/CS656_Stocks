@@ -11,27 +11,34 @@
 <link rel="stylesheet" type="text/css" href="CSS/home.css">
 
 <?php
-
-error_reporting(E_ALL);
+	//error handling and auth test
+	error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
 ini_set('display_startup_errors', TRUE);
-	?>
-	
-<?php require_once 'DBconnect.php';
+
+	require_once 'DBconnect.php';
 	session_start();
 	
 	//resets error vars
 	unset($_SESSION['ERROR']);
 	unset($_SESSION['ERROR_PATH']);
+	$_SESSION["USER"]="jared";
+	$CURPORTFOLIO="";
 	
-	if ($_SESSION["authenticated"] == "" or (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800))){
-		session_unset(); 
-		session_destroy(); 
-		header("Location: index.php"); /* Redirect browser */
-		exit();
+	//if ($_SESSION["authenticated"] == "" or (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800))){
+	//	session_unset(); 
+	//	session_destroy(); 
+	//	header("Location: index.php"); /* Redirect browser */
+	//	exit();
+	//}
+	//$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
+	
+	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+		$CURPORTFOLIO=$_POST['portfolio'];
 	}
-	$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
-	?>
+	
+	echo $_SESSION["USER"]. "|".$CURPORTFOLIO;
+?>
 	
 <title>Portfolio Page</title>
 </head>
@@ -40,38 +47,118 @@ ini_set('display_startup_errors', TRUE);
 <h1>Portfolio Page</h1>
 <?php include 'menu.php';?>
 <h2>Users Portfolio</h2>
+	
 
+
+<div class='row'>
+<h3>Edit Portfolio</h3>	
+	<form method = "post" Action ="portfolioEdit.php">
+	Portfolio Name: <input type="text">
+	<input type="submit" name="CHANGE" value="Change">
+	</form>
+	
+	<form method = "post" Action ="portfolioEdit.php?PortfolioID">
+	<?php 
+	$result2 = $conn->query("SELECT * FROM np397.SM_Portfolio;");
+	if (!$result2) {
+		die('Invalid query: ' . mysql_error());
+		$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+		header('Location: Error.php');
+	}
+	echo '<select name="portfolio">
+	      <option value="" selected="selected">Select a Portfolio to delete</option>';
+	while ($row2 = $result2->fetch_assoc()){
+		echo '<option value="'.$row2['portfolioID'].'">'.$row2['name'].'</option>';
+	}
+	echo '</select>';
+	 ?>
+	<input type="submit" name="DELETE" value="Delete Portfolio">
+	</form>
+	
+	<form method = "post" Action ="portfolioEdit.php">
+	Portfolio Name: <input type="text">
+	<input type="submit" name="ADD" value="Add Portfolio">
+	</form>
+</div>
+<br><br>
+	
+	
+	
+<div class='row'>
+<h3>Select Protfolio</h3>	
+	<form name="SelectPortfolio" method="POST">
+	<?php 
+	$result2 = $conn->query("SELECT * FROM np397.SM_Portfolio;");
+	if (!$result2) {
+		die('Invalid query: ' . mysql_error());
+		$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+		header('Location: Error.php');
+	}
+	echo '<select onchange="this.form.submit()" name="portfolio" id="portfolio">
+	      <option value="" selected="selected">Select a Portfolio to Use</option>';
+	while ($row2 = $result2->fetch_assoc()){
+		echo '<option value="'.$row2['portfolioID'].'"';
+		if ($row2['portfolioID']==$CURPORTFOLIO){
+			echo 'selected="selected"';
+		} 
+		echo '>'.$row2['name'].'</option>';
+	}
+	echo '</select>';
+	 ?>
+</form>
+</div>	
+<br><br>	
+	
+	
+<div class='row'>
+<h3>Buy Stock</h3>	
+	<form method = "post" Action ="Buy_Sell.php">
+	Stock Symbol: <input type="text">
+	# of Stocks: <input type="number">
+	<input type="submit" name="BUY" value="Buy Stock">
+	</form>
+</div>
+<br><br>	
+	
+	
+	
 <table id="projectSpreadsheet">
  <thead>
   <tr>
     <th>Stock Name</th>
     <th>Stock Symbol</th>
+	<th>Total Owned Shares</th>
+	<th>Total Owned Amount</th>
     <th>List Price</th>
     <th>Market Cap</th>
     <th>Open Price</th>
     <th>Close Price</th>
+	<th>Sell?</th>
   </tr>
 	</thead>
 	<tbody id="tbodyid">
    <?php
-		$query = "select * from np397.SM_Portfolio Where Username= '".$_SESSION["USER"]."';";
- 		$result=mysqli_query($conn,$query);
+	if ($CURPORTFOLIO != ""){
+ 		$result=mysqli_query($conn,"select * from np397.SM_Stocks left join np397.SM_Transaction on SM_Stocks.StockID=SM_Transaction.StockID Where portfolioID= '".$CURPORTFOLIO."';");
  		$numrows=mysqli_num_rows($result);
 
-  while($row = mysqli_fetch_assoc($result)) {
-        ?>
-        <tr>
+  while($row = mysqli_fetch_assoc($result)) {?>
+  <tr>
     <td><?php echo $row['StockName']?></td>
+	<td><?php echo $row['StockSymbol']?></td>
+	<td><?php echo $row['StockSymbol']?></td>
     <td><?php echo $row['StockSymbol']?></td>
     <td><?php echo $row['ListPrice']?>.</td>
     <td><?php echo $row['MarketCap']?></td>
     <td><?php echo $row['OpenPrice']?>.</td>
     <td><?php echo $row['ClosePrice']?>.</td>
+	<td>
+		<form id="buy" method = "post" Action ="Buy_Sell.php?StockID=<?php echo $row['StockID']?>">
+			<input type="submit" name="SELL" value="Sell Stock">
+		</form>
+	</td>
   </tr>
-   <?php
-
-        }
-        ?>
+   <?php }}?>
 	</tbody>
 </table>
 <br> 
