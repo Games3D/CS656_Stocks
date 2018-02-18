@@ -23,21 +23,20 @@ ini_set('display_startup_errors', TRUE);
 	unset($_SESSION['ERROR']);
 	unset($_SESSION['ERROR_PATH']);
 	$_SESSION["USER"]="jared";
-	$CURPORTFOLIO="";
-	
-	//if ($_SESSION["authenticated"] == "" or (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800))){
-	//	session_unset(); 
-	//	session_destroy(); 
-	//	header("Location: index.php"); /* Redirect browser */
-	//	exit();
-	//}
-	//$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
+
+	/*if ($_SESSION["authenticated"] == "" or (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800))){
+		session_unset(); 
+		session_destroy(); 
+		header("Location: index.php"); 
+		exit();
+	}*/
+	$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
 	
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-		$CURPORTFOLIO=$_POST['portfolio'];
+		$_SESSION['CURPORTFOLIO']=$_POST['portfolio'];
 	}
 	
-	echo $_SESSION["USER"]. "|".$CURPORTFOLIO;
+	echo $_SESSION["USER"]. "|".$_SESSION['CURPORTFOLIO'];
 ?>
 	
 <title>Portfolio Page</title>
@@ -49,17 +48,41 @@ ini_set('display_startup_errors', TRUE);
 <h2>Users Portfolio</h2>
 	
 
+	
+<div class="row">
+<h3>Balance and Reporting</h3>	
+	<?php 
+	$result2 = $conn->query("SELECT Balance FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
+	if (!$result2) {
+		die('Invalid query: ' . mysql_error());
+		$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+		header('Location: Error.php');
+	}
+	$row2 = $result2->fetch_assoc();
+	echo "Currect Balance: ". $row2['Balance'];
+	 ?>
+	<form method = "post" Action ="portfolioEdit.php">
+	Amount of $ to add to your balance: <input name="funds" type="number">
+	<input type="submit" name="BALANCE_ADD" value="Add Funds">
+	</form>
+	<form method = "post" Action ="portfolioEdit.php">
+	Amount of $ to remove from your balance: <input name="funds" type="number">
+	<input type="submit" name="BALANCE_SUB" value="Remove Funds">
+	</form>
+</div>
+	
+	
 
 <div class='row'>
 <h3>Edit Portfolio</h3>	
 	<form method = "post" Action ="portfolioEdit.php">
-	Portfolio Name: <input type="text">
+	Portfolio Name: <input name="name" type="text">
 	<input type="submit" name="CHANGE" value="Change">
 	</form>
 	
 	<form method = "post" Action ="portfolioEdit.php?PortfolioID">
 	<?php 
-	$result2 = $conn->query("SELECT * FROM np397.SM_Portfolio;");
+	$result2 = $conn->query("SELECT * FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."';");
 	if (!$result2) {
 		die('Invalid query: ' . mysql_error());
 		$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
@@ -76,7 +99,7 @@ ini_set('display_startup_errors', TRUE);
 	</form>
 	
 	<form method = "post" Action ="portfolioEdit.php">
-	Portfolio Name: <input type="text">
+	Portfolio Name: <input name="name" type="text">
 	<input type="submit" name="ADD" value="Add Portfolio">
 	</form>
 </div>
@@ -88,7 +111,7 @@ ini_set('display_startup_errors', TRUE);
 <h3>Select Protfolio</h3>	
 	<form name="SelectPortfolio" method="POST">
 	<?php 
-	$result2 = $conn->query("SELECT * FROM np397.SM_Portfolio;");
+	$result2 = $conn->query("SELECT * FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."';");
 	if (!$result2) {
 		die('Invalid query: ' . mysql_error());
 		$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
@@ -98,7 +121,7 @@ ini_set('display_startup_errors', TRUE);
 	      <option value="" selected="selected">Select a Portfolio to Use</option>';
 	while ($row2 = $result2->fetch_assoc()){
 		echo '<option value="'.$row2['portfolioID'].'"';
-		if ($row2['portfolioID']==$CURPORTFOLIO){
+		if ($row2['portfolioID']==$_SESSION['CURPORTFOLIO']){
 			echo 'selected="selected"';
 		} 
 		echo '>'.$row2['name'].'</option>';
@@ -112,9 +135,9 @@ ini_set('display_startup_errors', TRUE);
 	
 <div class='row'>
 <h3>Buy Stock</h3>	
-	<form method = "post" Action ="Buy_Sell.php">
-	Stock Symbol: <input type="text">
-	# of Stocks: <input type="number">
+	<form method = "get" Action ="Buy_Sell.php">
+	Stock Symbol: <input name="symbol" type="text">
+	# of Stocks: <input name="amount" type="number">
 	<input type="submit" name="BUY" value="Buy Stock">
 	</form>
 </div>
@@ -139,29 +162,29 @@ ini_set('display_startup_errors', TRUE);
 	</thead>
 	<tbody id="tbodyid">
    <?php
-	if ($CURPORTFOLIO != ""){
- 		$result=mysqli_query($conn,"select * from np397.SM_Stocks left join np397.SM_Transaction on SM_Stocks.StockID=SM_Transaction.StockID Where portfolioID= '".$CURPORTFOLIO."';");
+	if ($_SESSION['CURPORTFOLIO'] != ""){
+ 		$result=mysqli_query($conn,"select * from np397.SM_Stocks Where portfolioID='".$_SESSION['CURPORTFOLIO']."';");
  		$numrows=mysqli_num_rows($result);
 
-  while($row = mysqli_fetch_assoc($result)) {?>
+  while($row = mysqli_fetch_assoc($result)) {
+	  	$resultSuma=mysqli_query($conn,"select sum(ShareQuantity) as aa from np397.SM_Transaction Where StockID='".$row['StockID']."';");
+		$rowSuma = mysqli_fetch_assoc($resultSuma);
+		$resultSumb=mysqli_query($conn,"select UnitPrice as bb from np397.SM_Transaction Where StockID='".$row['StockID']."';");
+		$rowSumb = mysqli_fetch_assoc($resultSumb);?>
   <tr>
     <td><?php echo $row['StockName']?></td>
 	<td><?php echo $row['StockSymbol']?></td>
-	<td><?php echo $row['StockSymbol']?></td>
-    <td><?php echo $row['StockSymbol']?></td>
+	<td><?php echo $rowSuma['aa']?></td>
+    <td><?php echo $rowSumb['bb']*$rowSuma['aa']?></td>
     <td><?php echo $row['ListPrice']?>.</td>
     <td><?php echo $row['MarketCap']?></td>
     <td><?php echo $row['OpenPrice']?>.</td>
     <td><?php echo $row['ClosePrice']?>.</td>
 	<td>
-		<form id="buy" method = "post" Action ="Buy_Sell.php?StockID=<?php echo $row['StockID']?>">
-			<input type="submit" name="SELL" value="Sell Stock">
-		</form>
+		<button name="SELL" onClick='location.href="Buy_Sell.php?OP=SELL&StockID=<?php echo $row['StockID'] ?>"'>Sell Stock</button>
 	</td>
 	<td>
-		<form id="buy" method = "post" Action ="Buy_Sell.php?StockID=<?php echo $row['StockID']?>">
-			<input type="submit" name="HISTORY" value="See History">
-		</form>
+		<button name="HISTORY" onClick='location.href="Buy_Sell.php?OP=HISTORY&StockID=<?php echo $row['StockID'] ?>"'>See History</button>
 	</td>
   </tr>
    <?php }}?>
