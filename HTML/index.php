@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			
 			if ($row['Username'] == $username && $row['Password'] == $password){
 				$_SESSION["authenticated"] = 'true';
-				$_SESSION["USER"] = $row['username'];
+				$_SESSION["USER"] = $row['Username'];
 				$loggedin="true";
 				$isConfirmed = $row["Confirmed"];
 			}
