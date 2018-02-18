@@ -40,7 +40,7 @@ if(!empty($_POST["register-user"])) {
 				$error_message = "Email address already exists. Try Again!";
 			}else{
 
-				$query = "INSERT INTO SM_Users (username, password, balance, email, phone_num, birth_date, confirmed) VALUES('" . strtolower($_POST["username"]) . "', '" . strtolower($_POST["password"]) . "', '".'0' . "', '". strtolower($_POST["email"]) . "', '" . $_POST["phone_num"] . "', '" . $_POST["birth_date"] . "', '" . '0' . "')";
+				$query = "INSERT INTO SM_Users (username, password, email, phone_num, birth_date, confirmed) VALUES('" . strtolower($_POST["username"]) . "', '" . strtolower($_POST["password"]) . "', '". strtolower($_POST["email"]) . "', '" . $_POST["phone_num"] . "', '" . $_POST["birth_date"] . "', '" . '0' . "')";
 				$result = $conn->query($query);
 				if(!empty($result)) {
 					$error_message = "";
