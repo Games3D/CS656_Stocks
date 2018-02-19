@@ -3,7 +3,6 @@
 require_once 'DBconnect.php';
 
 	session_start();
-	echo($_SESSION["USER"]);
 	//resets error vars
 	unset($_SESSION['ERROR']);
 	unset($_SESSION['ERROR_PATH']);
@@ -15,56 +14,106 @@ require_once 'DBconnect.php';
 		exit();
 	}
 	$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
-	echo("1");
 
 if(isset($_POST['importSubmit'])){
+	//get the user's current balance
+	$result2 = $conn->query("SELECT Balance FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
+			if (!$result2) {
+				die('Invalid query: ' . mysql_error());
+				$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+				header('Location: Error.php');
+				return;
+			}
+			$row2 = $result2->fetch_assoc();
+			$BALANCE=$row2['Balance'];
+	
     //validate whether uploaded file is a csv file
     $csvMimes = array('text/x-comma-separated-values', 'text/comma-separated-values', 'application/octet-stream', 'application/vnd.ms-excel', 'application/x-csv', 'text/x-csv', 'text/csv', 'application/csv', 'application/excel', 'application/vnd.msexcel', 'text/plain');
     
 	if(!empty($_FILES['file']['name']) && in_array($_FILES['file']['type'],$csvMimes)){
-        echo("1");
 		if(is_uploaded_file($_FILES['file']['tmp_name'])){
-            echo("2");
             //open uploaded csv file with read only mode
             $csvFile = fopen($_FILES['file']['tmp_name'], 'r');
-            echo("3");
-            //skip first line
-            fgetcsv($csvFile);
-           
+            
 			//parse data from csv file line by line
-           
 			while(($line = fgetcsv($csvFile)) !== FALSE){
+				//get request for stock info
+			
+			//TODO get request
+			$unitPrice=9;
+			$StockName="new stock";
+			$ListPrice=343;
+			$MarketCap=456565;
+			$OpenPrice=2323;
+			$ClosePrice=23232;
+				
+				if ($line[0]=='BUY'){
+					if (($line[2]*$unitPrice) > $BALANCE){
+						$_SESSION["ERROR"] = 'not enough funds to buy this stock';
+						header('Location: Error.php');
+						return;
+					}
+				} else {
+					$result2 = $conn->query("select sum(ShareQuantity) as aa from np397.SM_Transaction Where StockID='".$line[1]."';");
+					if (!$result2) {
+						die('Invalid query: ' . mysql_error());
+						$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+						header('Location: Error.php');
+						return;
+					}
+					$row2 = $result2->fetch_assoc();
+					
+					if ($row2['aa']<$SHARES || ($row2['aa']-$SHARES)<0){
+					$_SESSION["ERROR"] = 'not enough shares to sell';
+					header('Location: Error.php');
+					return;
+				}
+				}
 				
                 //check whether member already exists in database with same email
-                $prevQuery = "SELECT * FROM SM_Stocks WHERE portfolioID='".$_SESSION['CURPORTFOLIO']."'";
-				
-				echo("   ".$prevQuery."  ");
-				
-                $prevResult = $conn->query($prevQuery);
-				
-				//$result2 = $conn->query("SELECT StockID FROM np397.SM_Stocks where StockSymbol='".$_GET['symbol']."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
-				
-                if($prevResult->num_rows > 0){
+                $prevResult = $conn->query("SELECT * FROM np397.SM_Stocks WHERE PortfolioID='".$_SESSION['CURPORTFOLIO']."' and StockSymbol='".$line[1]."'");
+				$row2 = $prevResult->fetch_assoc();
+				echo $line[0];
+                if($prevResult->num_rows > 0){//stock aready there
+					echo "4.1";
+									
+					if ($line[0]=='BUY')
+						$a=$line[2];
+					else 
+						$a='-'.$line[2];
+					
                     //update member data
-                    $conn->query("UPDATE SM_Stocks (StockName, StockSymbol, ListPrice, MarketCap, OpenPrice, ClosePrice) VALUES ('".$line[0]."','".$line[1]."','".$line[4]."','".$line[5]."','".$line[6]."','".$line[7]."')");
+                    $conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$row2["StockID"]."', '".$a."', '".$unitPrice."', CURRENT_TIMESTAMP);");
 					
-                }else{
+                }else{//have to add new stock
+					echo "4.2";
+					
+					if ($line[0]=='BUY')
+						$a=$line[2];
+					else 
+						$a='-'.$line[2];
+					
                     //insert member data into database
-                    $conn  ->query("INSERT INTO SM_Stocks (PorrtfolioID,StockName, StockSymbol, ListPrice, MarketCap, OpenPrice, ClosePrice) VALUES ('"$_SESSION['CURPORTFOLIO'].",".$line[0]."','".$line[1]."','".$line[4]."','".$line[5]."','".$line[6]."','".$line[7]."')");
-					
-					//$conn  ->query("INSERT INTO SM_Transaction (StockId, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$row2["StockID"]."','".$line[2]."','".$line[4]."','CURRENT_TIMESTAMP')");
-					
-					
-                }
+                  	$conn->query("INSERT INTO np397.SM_Stocks (PortfolioID, StockSymbol, StockName, ListPrice, MarketCap, OpenPrice, ClosePrice) VALUES ('".$_SESSION['CURPORTFOLIO']."', '".$line[1]."', '".$StockName."', '".$ListPrice."', '".$MarketCap."', '".$OpenPrice."', '".$ClosePrice."');");
 				
+					$result3 = $conn->query("SELECT StockID FROM np397.SM_Stocks where StockSymbol='".$line[1]."' and PortfolioID='".$_SESSION['CURPORTFOLIO']."';");
+					
+					if (!$result3) {
+						die('Invalid query: ' . mysql_error());
+						$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+						header('Location: Error.php');
+						return;
+					}
+					$row3 = $result3->fetch_assoc();
+				
+					$conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$row3["StockID"]."', '".$a."', '".$unitPrice."', CURRENT_TIMESTAMP);");
+					echo $row3["StockID"]."|";
+				}
             }
-            echo("INSERT INTO SM_Stocks (PorrtfolioID,StockName, StockSymbol, ListPrice, MarketCap, OpenPrice, ClosePrice) VALUES ('"$_SESSION['CURPORTFOLIO'].",".$line[0]."','".$line[1]."','".$line[4]."','".$line[5]."','".$line[6]."','".$line[7]."')");
-			
+      
             //close opened csv file
             fclose($csvFile);
-			
-			
-            
+		  
 			$qstring = '?status=succ';
         }else{
             $qstring = '?status=err';

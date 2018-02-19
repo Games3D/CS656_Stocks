@@ -181,6 +181,7 @@ ini_set('display_startup_errors', TRUE);
     <td><?php echo $row['OpenPrice']?>.</td>
     <td><?php echo $row['ClosePrice']?>.</td>
 	<td>
+		<input type="number" name="SELL_NUM">
 		<button name="SELL" onClick='location.href="Buy_Sell.php?OP=SELL&StockID=<?php echo $row['StockID'] ?>"'>Sell Stock</button>
 	</td>
 	<td>
