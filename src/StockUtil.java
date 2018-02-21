@@ -19,47 +19,47 @@ import javax.servlet.http.HttpServletResponse;
 
 @SuppressWarnings("serial")
 public class StockUtil extends HttpServlet {
-
-	enum OPCODE{STOCK_PRICE, STOCK_STANDARDPRICE};
 	
 	public void init() throws ServletException {
 	   }
 
 	public void doGet ( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException    {
-		OPCODE OP=OPCODE.valueOf(request.getParameter("OPCODE"));
+		String OP=request.getParameter("OPCODE");
 		String PARAMS=request.getParameter("PARAMS");
-
 
 		// Set response content type
 		response.setContentType("text/html");
 
 		// Actual logic goes here.
 		PrintWriter out = response.getWriter();
-		out.println("<h1>" + GodSwitch(OP,PARAMS) + "</h1>");
+		out.println(GodSwitch(OP,PARAMS));
 		out.println("<br><h2>DONE</h2>");
 	}
 
 
 
 	@SuppressWarnings("unused")
-	private static String GodSwitch(OPCODE op, String Param) {
-		String[] P=Param.split(",");
-		if (P.length<=0){
-			System.out.println("BAD PARAM");
-			return "";
-		}
-
+	private static String GodSwitch(String op, String Param) {
 		String response="";
 
-		System.out.println("parameter OPCODE=" + op+"\nparameter PARAMS=" + Param);
+		System.out.println("parameter OPCODE=" + op);//+"\nparameter PARAMS=" + Param);
 		ResultSet rs=null;
 
 		switch(op) {
-		case STOCK_PRICE:
+		case "STOCK_PRICE":
 			response =  String.valueOf(new Stock("GOOGL").getPrice());
 			break;
-		case STOCK_STANDARDPRICE:
+		case "STOCK_STANDARDPRICE":
 			response =  String.valueOf(new Stock("GOOGL").getAdjustedPrice());
+			break;
+		case "STOCK_MARKETCAP":
+			response =  String.valueOf(new Stock("GOOGL").getMarketCap());
+			break;
+		case "STOCK_NAME":
+			response =  String.valueOf(new Stock("GOOGL").getName());
+			break;
+		case "STOCK_CURRENCY":
+			response =  String.valueOf(new Stock("GOOGL").getCurrency());
 			break;
 		default:
 			System.out.println("BAD PARAM");

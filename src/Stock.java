@@ -33,6 +33,7 @@ public class Stock {
 		stock.print();
 	}
 
+	public float getMarketCap() {return stock.getStats().getMarketCap().floatValue();}
 	public String getName() {return stock.getName();}
 	public String getSymbol() {return stock.getSymbol();}
 	public String getCurrency() {return stock.getCurrency();}
