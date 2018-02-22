@@ -15,21 +15,20 @@
 	error_reporting(E_ALL);
 ini_set('display_errors', TRUE);
 ini_set('display_startup_errors', TRUE);
-
 	require_once 'DBconnect.php';
 	session_start();
 	
 	//resets error vars
 	unset($_SESSION['ERROR']);
 	unset($_SESSION['ERROR_PATH']);
-	$_SESSION["USER"]="jared";
-
-	/*if ($_SESSION["authenticated"] == "" or (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800))){
+	
+	if ($_SESSION["authenticated"] == "" or (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800))){
 		session_unset(); 
 		session_destroy(); 
 		header("Location: index.php"); 
 		exit();
-	}*/
+	}
+	
 	$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
 	
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -144,7 +143,7 @@ ini_set('display_startup_errors', TRUE);
 <br><br>	
 	
 	
-	
+	<div class="table-responsive">
 <table id="projectSpreadsheet">
  <thead>
   <tr>
@@ -165,7 +164,6 @@ ini_set('display_startup_errors', TRUE);
 	if ($_SESSION['CURPORTFOLIO'] != ""){
  		$result=mysqli_query($conn,"select * from np397.SM_Stocks Where portfolioID='".$_SESSION['CURPORTFOLIO']."';");
  		$numrows=mysqli_num_rows($result);
-
   while($row = mysqli_fetch_assoc($result)) {
 	  	$resultSuma=mysqli_query($conn,"select sum(ShareQuantity) as aa from np397.SM_Transaction Where StockID='".$row['StockID']."';");
 		$rowSuma = mysqli_fetch_assoc($resultSuma);
@@ -181,9 +179,11 @@ ini_set('display_startup_errors', TRUE);
     <td><?php echo $row['OpenPrice']?>.</td>
     <td><?php echo $row['ClosePrice']?>.</td>
 	<td>
+	<form method = "get" Action ="Buy_Sell.php">
+	<input name="StockID" type="hidden" value="<?php echo $row['StockID']?>">
 		<input type="number" name="SELL_NUM">
-		<button name="SELL" onClick='location.href="Buy_Sell.php?OP=SELL&StockID=<?php echo $row['StockID'] ?>"'>Sell Stock</button>
-	</td>
+		<input type="submit" name="SELL" value="Sell">
+		</form>
 	<td>
 		<button name="HISTORY" onClick='location.href="Buy_Sell.php?OP=HISTORY&StockID=<?php echo $row['StockID'] ?>"'>See History</button>
 	</td>
@@ -191,6 +191,7 @@ ini_set('display_startup_errors', TRUE);
    <?php }}?>
 	</tbody>
 </table>
+	</div>
 <br> 
   
   <?php
@@ -239,7 +240,6 @@ if(!empty($_GET['status'])){
 </body>
 <script>
 	$(document).ready(function () {
-
 	function exportTableToCSV($table, filename) {
     
         var $rows = $table.find('tr:has(td),tr:has(th)'),
@@ -292,7 +292,6 @@ if(!empty($_GET['status'])){
         // IF CSV, don't do event.preventDefault() or return false
         // We actually need this to be a typical hyperlink
     });
-
 });
 	</script>
 	
