@@ -4,7 +4,8 @@
 	require_once 'DBconnect.php';
 	session_start();
 
-	if ($_SERVER['REQUEST_METHOD'] == 'GET') {		
+	if ($_SERVER['REQUEST_METHOD'] == 'GET') {	
+		echo("SELL!!!".$_GET['SELL_NUM']);
 		if (isset($_GET['BUY'])){
 			echo "BUYYYYYYYYYYY";
 			//do a select on stocks to make sure the is added already, if yes then move on, if no then add
@@ -79,11 +80,11 @@
 			$result2 = $conn->query("UPDATE np397.SM_Portfolio set Balance='".($BALANCE-($_GET['amount']*$unitPrice))."' where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 			
 			header("Location: portfolio.php");
-		} elseif ($_GET['OP']=='SELL'){
+		} elseif (isset($_GET['SELL'])){
 			//insert a sell transaction
 			//test to see if stock balance is 0, if yes then remove stock
 			echo "SELLLLLLLLLLL". $_GET["StockID"];
-			$SHARES=3;
+			$SHARES=$_GET['SELL_NUM'];
 			
 			//get request for stock info
 			
@@ -123,6 +124,7 @@
 			$result2 = $conn->query("UPDATE np397.SM_Portfolio set Balance='".($BALANCE+($SHARES*$unitPrice))."' where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 			
 			header("Location: portfolio.php");
+			
 		} elseif ($_GET['OP']=='HISTORY'){
 			//write page to display history of transactions for this stock
 			
