@@ -85,6 +85,19 @@ td, th {
     padding: 8px;
 }
 
-tr:nth-child(even) {
+tr:nth-child(2n) {
     background-color: #dddddd;
+}
+.table-responsive {
+    min-height: .01%;
+    overflow-x: auto;
+    border-radius: 15px;
+}
+.table-responsive {
+    min-height: .01%;
+    overflow-x: auto;
+}
+table thead {
+    background: #77777b;
+    color: #FFF;
 }
