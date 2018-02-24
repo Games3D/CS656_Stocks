@@ -34,6 +34,7 @@ ini_set('display_startup_errors', TRUE);
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$_SESSION['CURPORTFOLIO']=$_POST['portfolio'];
 	}
+	
 
 ?>
 	
@@ -140,7 +141,6 @@ ini_set('display_startup_errors', TRUE);
 	</form>
 </div>
 <br><br>	
-	
 	<div class="row">
 		<a href="portfolio.php"><button>American</button>
 		<a href ="portfoliosing.php"><button>Singapore</button>
@@ -148,25 +148,6 @@ ini_set('display_startup_errors', TRUE);
 			</a>
 	</div>
 	<br>
-	
-	
-	<br>
-	
-
-<?php
-$url = '184.102.96.207:8080/tomcatTEST/NewFile.jsp?OPCODE=FIRSTBUY&PARAMS=GOOGL';
- 
-//Once again, we use file_get_contents to GET the URL in question.
-$contents = file_get_contents($url);
- 
-//If $contents is not a boolean FALSE value.
-if($contents !== false){
-    //Print out the contents.
-    echo $contents;
-}
-?>
-
-
 	<div class="table-responsive">
 <table id="projectSpreadsheet">
  <thead>

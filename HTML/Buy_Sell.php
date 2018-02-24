@@ -83,7 +83,7 @@
 		} elseif (isset($_GET['SELL'])){
 			//insert a sell transaction
 			//test to see if stock balance is 0, if yes then remove stock
-			echo "SELLLLLLLLLLL". $_GET["StockID"];
+			
 			$SHARES=$_GET['SELL_NUM'];
 			
 			//get request for stock info
