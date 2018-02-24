@@ -26,23 +26,25 @@
 		} elseif (isset($_POST['ADD'])){
 			echo "ADD";
 			
-			if (!isset($_POST["name"])){
-				$_SESSION["ERROR"] = 'Invaild Parameters';
+			if ($_POST["name"] == ""){
+				$_SESSION["ERROR"] = 'Enter portfolio name.';
 				header('Location: Error.php');
 				return;
+			}else{
+				$conn->query("INSERT into np397.SM_Portfolio (Username, name) values('".$_SESSION["USER"]."', '".$_POST["name"]."');");
 			}
-			
-			$conn->query("INSERT into np397.SM_Portfolio (Username, name) values('".$_SESSION["USER"]."', '".$_POST["name"]."');");
+
 		} elseif (isset($_POST['DELETE'])){
 			echo "DELETE";
 			
-			if (!isset($_POST["portfolio"])){
-				$_SESSION["ERROR"] = 'Invaild Parameters';
+			if ($_POST["portfolio"] == ""){
+				$_SESSION["ERROR"] = 'Please select a portfolio.';
 				header('Location: Error.php');
 				return;
+			}else{
+				$conn->query("DELETE from np397.SM_Portfolio where portfolioID='".$_POST["portfolio"]."';");
 			}
-			
-			$conn->query("DELETE from np397.SM_Portfolio where portfolioID='".$_POST["portfolio"]."';");
+
 		} elseif (isset($_POST['BALANCE_ADD'])){
 			echo "BALANCE_ADD";
 
