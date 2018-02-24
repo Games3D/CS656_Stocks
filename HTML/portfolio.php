@@ -151,22 +151,6 @@ ini_set('display_startup_errors', TRUE);
 	
 	
 	<br>
-	
-
-<?php
-$url = '184.102.96.207:8080/tomcatTEST/NewFile.jsp?OPCODE=FIRSTBUY&PARAMS=GOOGL';
- 
-//Once again, we use file_get_contents to GET the URL in question.
-$contents = file_get_contents($url);
- 
-//If $contents is not a boolean FALSE value.
-if($contents !== false){
-    //Print out the contents.
-    echo $contents;
-}
-?>
-
-
 	<div class="table-responsive">
 <table id="projectSpreadsheet">
  <thead>

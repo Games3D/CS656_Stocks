@@ -5,7 +5,7 @@
 	session_start();
 
 	if ($_SERVER['REQUEST_METHOD'] == 'GET') {	
-		echo("SELL!!!".$_GET['SELL_NUM']);
+		echo("SELL!!!".$_GET['SELL_NUM']."|".isset($_GET['SELL'])."|");
 		if (isset($_GET['BUY'])){
 			echo "BUYYYYYYYYYYY";
 			//do a select on stocks to make sure the is added already, if yes then move on, if no then add
@@ -21,14 +21,38 @@
 			}
 			
 			//get request for stock info
+			$urlFirst = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=FIRSTBUY&PARAMS='.$_GET['symbol'];
+ 			$contentsFirst = file_get_contents($urlFirst);
+
+			//If $contents is not a boolean FALSE value.
+			if($contentsFirst == false){
+				$_SESSION["ERROR"] = 'Get request error';
+				header('Location: Error.php');
+				return;
+			}
+			$DATAFIRST = explode(",", $contentsFirst);
 			
-			//TODO get request
-			$unitPrice=9;
-			$StockName="new stock";
-			$ListPrice=343;
-			$MarketCap=456565;
-			$OpenPrice=2323;
-			$ClosePrice=23232;
+
+			$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$_GET['symbol'];
+ 			$contents = file_get_contents($url);
+
+			//If $contents is not a boolean FALSE value.
+			if($contents == false){
+				$_SESSION["ERROR"] = 'Get request error';
+				header('Location: Error.php');
+				return;
+			}
+			$DATA = explode(",", $contents);
+			
+			
+			$FirstPrice=$DATAFIRST[10];
+			$unitPrice=$DATA[7];
+			$StockName=$DATA[2];
+			$ListPrice=$DATA[6];
+			$MarketCap=$DATA[1];
+			$OpenPrice=$DATA[3];
+			$ClosePrice=$DATA[5];
+			$Currency=$DATA[4];
 			
 			//gets the user's balance
 			$result2 = $conn->query("SELECT Balance FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
@@ -61,6 +85,8 @@
 				$conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$row2["StockID"]."', '".$_GET['amount']."', '".$unitPrice."', CURRENT_TIMESTAMP);");
 			}else{//new stock
 				echo "|stock|";
+				$unitPrice=$FirstPrice;//sets the price to the old price 
+				
 				$conn->query("INSERT INTO np397.SM_Stocks (PortfolioID, StockSymbol, StockName, ListPrice, MarketCap, OpenPrice, ClosePrice) VALUES ('".$_SESSION['CURPORTFOLIO']."', '".$_GET['symbol']."', '".$StockName."', '".$ListPrice."', '".$MarketCap."', '".$OpenPrice."', '".$ClosePrice."');");
 				
 				$result3 = $conn->query("SELECT StockID FROM np397.SM_Stocks where StockSymbol='".$_GET['symbol']."' and PortfolioID='".$_SESSION['CURPORTFOLIO']."';");
@@ -87,9 +113,29 @@
 			$SHARES=$_GET['SELL_NUM'];
 			
 			//get request for stock info
+			$result2 = $conn->query("select * from np397.SM_Stocks Where StockID='".$_GET['StockID']."';");
+			if (!$result2) {
+				die('Invalid query: ' . mysql_error());
+				$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+				header('Location: Error.php');
+				return;
+			}
+			$row2 = $result2->fetch_assoc();
 			
-			//TODO get request
-			$unitPrice=9;
+			$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$row2['StockSymbol'];
+ 			$contents = file_get_contents($url);
+echo $contents;
+			//If $contents is not a boolean FALSE value.
+			if($contents == false){
+				$_SESSION["ERROR"] = 'Get request error';
+				header('Location: Error.php');
+				return;
+			}
+			$DATA = explode(",", $contents);
+			
+			
+			$unitPrice=$DATA[7];
+			echo $unitPrice;
 			
 			//gets the user's balance
 			$result2 = $conn->query("SELECT Balance FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
