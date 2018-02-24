@@ -33,7 +33,7 @@ public class StockUtil extends HttpServlet {
 		// Actual logic goes here.
 		PrintWriter out = response.getWriter();
 		out.println(GodSwitch(OP,PARAMS));
-		out.println("<br><h2>DONE</h2>");
+		out.close();
 	}
 
 
@@ -42,24 +42,15 @@ public class StockUtil extends HttpServlet {
 	private static String GodSwitch(String op, String Param) {
 		String response="";
 
-		System.out.println("parameter OPCODE=" + op);//+"\nparameter PARAMS=" + Param);
-		ResultSet rs=null;
+		//System.out.println("parameter OPCODE=" + op);//+"\nparameter PARAMS=" + Param);
+		StockTest c = new StockTest(Param);
 
 		switch(op) {
-		case "STOCK_PRICE":
-			response =  String.valueOf(new Stock("GOOGL").getPrice());
+		case "FIRSTBUY":
+			response =  c.firstBuy();
 			break;
-		case "STOCK_STANDARDPRICE":
-			response =  String.valueOf(new Stock("GOOGL").getAdjustedPrice());
-			break;
-		case "STOCK_MARKETCAP":
-			response =  String.valueOf(new Stock("GOOGL").getMarketCap());
-			break;
-		case "STOCK_NAME":
-			response =  String.valueOf(new Stock("GOOGL").getName());
-			break;
-		case "STOCK_CURRENCY":
-			response =  String.valueOf(new Stock("GOOGL").getCurrency());
+		case "GETQUOTE":
+			response =  c.getQuote();
 			break;
 		default:
 			System.out.println("BAD PARAM");
