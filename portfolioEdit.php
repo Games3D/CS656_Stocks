@@ -103,5 +103,5 @@
 			}
 		}
 }
-//header("Location: portfolio.php");
+header("Location: portfolio.php");
 ?>
