@@ -22,8 +22,8 @@
 			$conn->query("UPDATE np397.SM_Portfolio set name='".$_POST["name"]."' Where portfolioID= '".$_SESSION['CURPORTFOLIO']."';");
 		} elseif (isset($_POST['ADD'])){
 			//echo "ADD";
-			
-			if (!isset($_POST["name"])){
+			echo "|".$_POST["name"]."|";
+			if (!isset($_POST["name"]) || $_POST["name"]==""){
 				$_SESSION["ERROR"] = 'Invaild Parameters';
 				header('Location: Error.php');
 				return;

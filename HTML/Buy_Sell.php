@@ -34,9 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 				header('Location: Error.php');
 				return;
 			}
-
+		
+		$sss=$_GET['symbol'];
+		$result2 = $conn->query("SELECT * FROM np397.SM_StockList where Symbol='".strtoupper($_GET['symbol'])."';");
+		$row22 = $result2->fetch_assoc();
+		if ($row22['Market']=="NSE"){
+			$sss=$_GET['symbol'].".ns";
+		}
+		
 		//get request for stock info
-		$urlFirst = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=FIRSTBUY&PARAMS='.$_GET['symbol'];
+		$urlFirst = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=FIRSTBUY&PARAMS='.$sss;
 		$contentsFirst = file_get_contents($urlFirst);
 
 		//If $contents is not a boolean FALSE value.
@@ -48,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$DATAFIRST = explode(",", $contentsFirst);
 
 
-		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$_GET['symbol'];
+		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$sss;
 		$contents = file_get_contents($url);
 
 		//If $contents is not a boolean FALSE value.
@@ -102,10 +109,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		}
 		$row2 = $result2->fetch_assoc();
 		if ($row2['StockID'] != ""){//tests to see if the stock is there already or not
-			//echo "|trans|";
+			echo "|trans|";
 			$conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$row2["StockID"]."', '".$_GET['amount']."', '".$unitPrice."', CURRENT_TIMESTAMP);");
 		}else{//new stock
-			//echo "|stock|";
+			echo "|stock|";
 			$unitPrice=$FirstPrice;//sets the price to the old price 
 
 			$conn->query("INSERT INTO np397.SM_Stocks (PortfolioID, StockSymbol, StockName, ListPrice, MarketCap, OpenPrice, ClosePrice) VALUES ('".$_SESSION['CURPORTFOLIO']."', '".$_GET['symbol']."', '".$StockName."', '".$ListPrice."', '".$MarketCap."', '".$OpenPrice."', '".$ClosePrice."');");
@@ -120,13 +127,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			$row3 = $result3->fetch_assoc();
 
 			$conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$row3["StockID"]."', '".$_GET['amount']."', '".$unitPrice."', CURRENT_TIMESTAMP);");
-			//echo $row3["StockID"]."|";
+			echo $row3["StockID"]."|".$_GET['symbol']."}";
 		}
 
 		//Updates balance
 		$result2 = $conn->query("UPDATE np397.SM_Portfolio set Balance='".($BALANCE-($_GET['amount']*$unitPrice))."' where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 
-		header("Location: portfolio.php");
+		//header("Location: portfolio.php");
 	} elseif (isset($_GET['sellF'])){
 		$SHARES=$_GET['SELL_NUM'];	
 		
@@ -283,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 					<tr>
 						<th>Time Stamp</th>
 						<th># of Shares</th>
-						<th>Amount</th>
+						<th>Purchase Price</th>
 					</tr>
 				</thead>
 				<tbody id="tbodyid">
@@ -301,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 							<?php echo $row['ShareQuantity']?>
 						</td>
 						<td>
-							<?php echo $row['UnitPrice']?>.</td>
+							<?php echo $row['UnitPrice']?></td>
 					</tr>
 					<?php }?>
 				</tbody>

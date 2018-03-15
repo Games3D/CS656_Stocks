@@ -36,6 +36,15 @@
 	if ( $_SERVER[ 'REQUEST_METHOD' ] == 'POST' ) {
 		$_SESSION[ 'CURPORTFOLIO' ] = $_POST[ 'portfolio' ];
 	}
+	
+	$result2 = $conn->query( "SELECT Balance FROM np397.SM_Portfolio where Username='" . $_SESSION[ "USER" ] . "' and portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "';" );
+		if ( !$result2 ) {
+			die( 'Invalid query: ' . mysql_error() );
+			$_SESSION[ "ERROR" ] = 'Invalid query: ' . mysql_error();
+			header( 'Location: Error.php' );
+		}
+		$row2 = $result2->fetch_assoc();
+		echo "Current Portfolio Balance: " . $row2[ 'Balance' ];
 
 	?>
 
@@ -175,6 +184,7 @@
 						<th>Stock Symbol</th>
 						<th>Total Owned Shares</th>
 						<th>Total Owned Amount</th>
+						<th>Total Bought</th>
 						<th>List Price</th>
 						<th>Market Cap</th>
 						<th>Open Price</th>
@@ -189,10 +199,43 @@
 						$result = mysqli_query( $conn, "select * from np397.SM_Stocks Where portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "';" );
 						$numrows = mysqli_num_rows( $result );
 						while ( $row = mysqli_fetch_assoc( $result ) ) {
+							$sss=$row['StockSymbol'];
+							$result2 = $conn->query("SELECT * FROM np397.SM_StockList where Symbol='".strtoupper($sss)."';");
+							$row22 = $result2->fetch_assoc();
+							if ($row22['Market']=="NSE"){
+								$sss=$row['StockSymbol'].".ns";
+							}
+							$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$sss;
+							$contents = file_get_contents($url);
+
+							//If $contents is not a boolean FALSE value.
+							if($contents == false){
+								$_SESSION["ERROR"] = 'Get request error';
+								header('Location: Error.php');
+								return;
+							}
+							$DATA = explode(",", $contents);
+							
+							$unitPrice=$DATA[6];
+							$MarketCap=$DATA[1];
+							$OpenPrice=$DATA[3];
+							$ClosePrice=$DATA[5];
+							
+							//gets the sum of shares
 							$resultSuma = mysqli_query( $conn, "select sum(ShareQuantity) as aa from np397.SM_Transaction Where StockID='" . $row[ 'StockID' ] . "';" );
 							$rowSuma = mysqli_fetch_assoc( $resultSuma );
+							
+							//idk anymore
 							$resultSumb = mysqli_query( $conn, "select UnitPrice as bb from np397.SM_Transaction Where StockID='" . $row[ 'StockID' ] . "';" );
 							$rowSumb = mysqli_fetch_assoc( $resultSumb );
+							
+							//gets the total bought
+							$resultl = mysqli_query( $conn, "select * from np397.SM_Transaction Where StockID='" . $row[ 'StockID' ] . "';");
+							$TOTALBOUGHT=0;
+							while ( $row3 = mysqli_fetch_assoc($resultl) ) {
+								$TOTALBOUGHT+=$row3['ShareQuantity']*$row3['UnitPrice'];
+								echo $row3['ShareQuantity']."|".$row3['UnitPrice'];
+							}
 							?>
 					<tr>
 						<td>
@@ -208,14 +251,17 @@
 							<?php echo $rowSumb['bb']*$rowSuma['aa']?>
 						</td>
 						<td>
-							<?php echo $row['ListPrice']?>.</td>
-						<td>
-							<?php echo $row['MarketCap']?>
+							<?php echo $TOTALBOUGHT?>
 						</td>
 						<td>
-							<?php echo $row['OpenPrice']?>.</td>
+							<?php echo $unitPrice?></td>
 						<td>
-							<?php echo $row['ClosePrice']?>.</td>
+							<?php echo $MarketCap?>
+						</td>
+						<td>
+							<?php echo $OpenPrice?></td>
+						<td>
+							<?php echo $ClosePrice?></td>
 						<td>
 							<form method="get" Action="Buy_Sell.php">
 								<input name="StockID" type="hidden" value="<?php echo $row['StockID']?>">
