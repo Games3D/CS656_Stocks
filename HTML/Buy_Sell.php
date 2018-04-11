@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			header('Location: Error.php');
 			return;
 		}
-		$DATAFIRST = explode(",", $contentsFirst);
+		$DATAFIRST = explode("`", $contentsFirst);
 
 
 		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$sss;
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			header('Location: Error.php');
 			return;
 		}
-		$DATA = explode(",", $contents);
+		$DATA = explode("`", $contents);
 
 
 		$FirstPrice=$DATAFIRST[10];
