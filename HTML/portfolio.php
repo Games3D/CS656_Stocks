@@ -44,8 +44,6 @@
 			header( 'Location: Error.php' );
 		}
 		$row2 = $result2->fetch_assoc();
-		echo "Current Portfolio Balance: " . $row2[ 'Balance' ];
-
 	?>
 
 	<title>Portfolio Page</title>
@@ -189,6 +187,7 @@
 						<th>Market Cap</th>
 						<th>Open Price</th>
 						<th>Close Price</th>
+						<th>Gain / Loss</th>
 						<th>Sell?</th>
 						<th>View History</th>
 					</tr>
@@ -234,7 +233,7 @@
 							$TOTALBOUGHT=0;
 							while ( $row3 = mysqli_fetch_assoc($resultl) ) {
 								$TOTALBOUGHT+=$row3['ShareQuantity']*$row3['UnitPrice'];
-								echo $row3['ShareQuantity']."|".$row3['UnitPrice'];
+								//echo $row3['ShareQuantity']."|".$row3['UnitPrice'];
 							}
 							?>
 					<tr>
@@ -254,14 +253,20 @@
 							<?php echo $TOTALBOUGHT?>
 						</td>
 						<td>
-							<?php echo $unitPrice?></td>
+							<?php echo $unitPrice?>
+						</td>
 						<td>
 							<?php echo $MarketCap?>
 						</td>
 						<td>
-							<?php echo $OpenPrice?></td>
+							<?php echo $OpenPrice?>
+						</td>
 						<td>
-							<?php echo $ClosePrice?></td>
+							<?php echo $ClosePrice?>
+						</td>
+						<td>
+							<?php echo ((($rowSumb['bb']*$rowSuma['aa'])-$TOTALBOUGHT)/$TOTALBOUGHT)*100 ."%"?>
+						</td>
 						<td>
 							<form method="get" Action="Buy_Sell.php">
 								<input name="StockID" type="hidden" value="<?php echo $row['StockID']?>">
@@ -274,6 +279,7 @@
 								<input type="number" type="hidden" value="-1" name="SELL_NUM">
 								<input type="submit" name="SELL" value="Sell All">
 							</form>
+						</td>
 							<td>
 								<button name="HISTORY" onClick='location.href="Buy_Sell.php?OP=HISTORY&StockID=<?php echo $row['StockID']?>"'>See History</button>
 							</td>
@@ -305,7 +311,19 @@
 					$statusMsg = '';
 			}
 		}
-		?>
+		
+		//gets the user's balance
+		$result2 = $conn->query("SELECT Balance FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
+		if (!$result2) {
+			die('Invalid query: ' . mysql_error());
+			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+			header('Location: Error.php');
+			return;
+		}
+		$row2 = $result2->fetch_assoc();
+		$BALANCE=$row2['Balance'];		
+				
+		if ($BALANCE!=0){ ?>
 		<div class="container">
 			<?php if(!empty($statusMsg)){
         echo '<div class="alert '.$statusMsgClass.'">'.$statusMsg.'</div>';
@@ -327,6 +345,7 @@
 				</div>
 			</div>
 		</div>
+				<?php } ?>
 
 </body>
 <script>

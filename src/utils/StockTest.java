@@ -213,9 +213,9 @@ public class StockTest {
 	
 	
 	public static void main (String[] args) {
-		StockTest c = new StockTest("lt.ns");
-		System.out.println(c.firstBuy());
-		//System.out.println(c.getQuote());
+		StockTest c = new StockTest("zeel.ns");
+		//System.out.println(c.firstBuy());
+		System.out.println(c.getQuote());
 		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
 		System.out.println("Done");
 	}
