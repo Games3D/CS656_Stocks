@@ -16,6 +16,8 @@ if (request.getParameter("OPCODE").equals("FIRSTBUY")){
 	out.print(c.firstBuy());
 }else if (request.getParameter("OPCODE").equals("GETQUOTE")){
 	out.print(c.getQuote());
+}else if (request.getParameter("OPCODE").equals("AFS")){
+	c.run();
 }
 %>
 </body>
