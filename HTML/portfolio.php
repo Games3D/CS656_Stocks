@@ -54,7 +54,12 @@
 	<?php include 'menu.php';?>
 	<h2>Users Portfolio</h2>
 
-
+	<div>
+	<h3>Optimizer</h3>
+	<form method="post" Action="RunOPT.php">
+			<input type="submit" name="RUN" value="Run">
+		</form>
+	</div>
 
 	<div class="row">
 		<h3>Balance and Reporting</h3>

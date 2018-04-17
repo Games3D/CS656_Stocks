@@ -133,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		//Updates balance
 		$result2 = $conn->query("UPDATE np397.SM_Portfolio set Balance='".($BALANCE-($_GET['amount']*$unitPrice))."' where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 
-		//header("Location: portfolio.php");
+		header("Location: portfolio.php");
 	} elseif (isset($_GET['sellF'])){
 		$SHARES=$_GET['SELL_NUM'];	
 		
