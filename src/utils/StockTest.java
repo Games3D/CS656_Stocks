@@ -250,7 +250,7 @@ public class StockTest {
 		String host="afs1.njit.edu";
 		String user="jp834";
 		String password="Mynjit19";
-		String command1="cat /tmp/TESTR.txt";//"ls -ltr";
+		String command1="cat /afs/cad.njit.edu/u/j/p/jp834/public_html/TESTR.txt";//"ls -ltr";
 		try{
 
 			java.util.Properties config = new java.util.Properties(); 
@@ -270,7 +270,7 @@ public class StockTest {
 			
 			ChannelSftp channelSftp = (ChannelSftp) channel;
 			channelSftp.cd("/tmp");
-			try (OutputStream out = channelSftp.put("/tmp/TESTR.txt")) {
+			try (OutputStream out = channelSftp.put("/afs/cad.njit.edu/u/j/p/jp834/public_html/TESTR.txt")) {
 			    OutputStreamWriter writer = new OutputStreamWriter(out);
 			    writer.write(OUTSTRING);
 			    writer.close();
