@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io. InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -26,6 +28,7 @@ import org.json.simple.parser.JSONParser;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
@@ -44,6 +47,7 @@ public class StockTest {
 		 * @param to to currency
 		 * @return the conversion rate in float form
 		 */
+		@SuppressWarnings("unused")
 		public static float conversionRate(String from, String to) {
 			try {
 				String url = "https://api.fixer.io/latest?base="+from;
@@ -94,6 +98,10 @@ public class StockTest {
 	public StockTest(String symbol) {
 		//setup
 		this.Symbol=symbol;
+		
+		if (symbol.contains("|"))//skips the rest of this if this is for running R
+			return;
+		
 		this.client = HttpClientBuilder.create().build();
 		this.context = HttpClientContext.create();
 		this.context.setCookieStore(new BasicCookieStore());
@@ -218,10 +226,31 @@ public class StockTest {
 	}
 
 	public String run() {
+		//getting params from the web
+		String[] DATA=null;
+		
+		try {
+			DATA=this.Symbol.split("|");
+		} catch (Exception e1) {
+			return "BAD PARAMS";
+		}
+		if (DATA.length<=1)
+			return "BAD PARAMS";
+		
+		String RR=DATA[0];
+		String ER=DATA[1];
+		String V=DATA[2];
+		String SD=DATA[3];
+		String SR=DATA[4];
+		
+		//making the file output string
+		String OUTSTRING="some text";
+		
+		//connecting to the AFS
 		String host="afs1.njit.edu";
 		String user="jp834";
 		String password="Mynjit19";
-		String command1="ls -ltr";
+		String command1="cat /tmp/TESTR.txt";//"ls -ltr";
 		try{
 
 			java.util.Properties config = new java.util.Properties(); 
@@ -231,15 +260,38 @@ public class StockTest {
 			session.setPassword(password);
 			session.setConfig(config);
 			session.connect();
-			System.out.println("Connected");
+			System.out.println("Connected to AFS");
 
-			Channel channel=session.openChannel("exec");
+			//write file to server
+			Channel channel = session.openChannel("sftp");
+			channel.connect();
+
+			System.out.println("SFTP Connection Opened\n");
+			
+			ChannelSftp channelSftp = (ChannelSftp) channel;
+			channelSftp.cd("/tmp");
+			try (OutputStream out = channelSftp.put("/tmp/TESTR.txt")) {
+			    OutputStreamWriter writer = new OutputStreamWriter(out);
+			    writer.write(OUTSTRING);
+			    writer.close();
+			} catch (IOException e) {
+			    e.printStackTrace();
+			}
+			channel.disconnect();
+			channelSftp.disconnect();
+			System.out.println("File has been written\n");
+			
+			
+			//send run command
+			channel=session.openChannel("exec");
 			((ChannelExec)channel).setCommand(command1);
 			channel.setInputStream(null);
 			((ChannelExec)channel).setErrStream(System.err);
-
 			InputStream in=channel.getInputStream();
 			channel.connect();
+			
+			System.out.println("Command Connection Opened\n---------------");
+			
 			byte[] tmp=new byte[1024];
 			while(true){
 				while(in.available()>0){
@@ -248,14 +300,14 @@ public class StockTest {
 					System.out.print(new String(tmp, 0, i));
 				}
 				if(channel.isClosed()){
-					System.out.println("exit-status: "+channel.getExitStatus());
+					System.out.println("\n---------------\nexit-status: "+channel.getExitStatus());
 					break;
 				}
 				try{Thread.sleep(1000);}catch(Exception ee){}
 			}
 			channel.disconnect();
 			session.disconnect();
-			System.out.println("DONE");
+			System.out.println("AFS disconnected");
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -264,10 +316,11 @@ public class StockTest {
 	}
 
 	public static void main (String[] args) {
-		StockTest c = new StockTest("zeel.ns");
+		//StockTest c = new StockTest("zeel.ns");
 		//System.out.println(c.firstBuy());
 		//System.out.println(c.getQuote());
 		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
+		StockTest c = new StockTest("0|0|0|0|0");
 		c.run();
 		System.out.println("Done");
 	}
