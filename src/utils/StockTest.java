@@ -99,7 +99,7 @@ public class StockTest {
 		//setup
 		this.Symbol=symbol;
 		
-		if (symbol.contains("|"))//skips the rest of this if this is for running R
+		if (symbol.contains(","))//skips the rest of this if this is for running R
 			return;
 		
 		this.client = HttpClientBuilder.create().build();
