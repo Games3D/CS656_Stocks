@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   <div class="login-help">
     <a href="RegisterAccount.php">Register</a> • <a href="ResetPassword.php">Forgot Password</a>
   </div>
-  <h1 align="center"><font size="3"> Created by Chris, Saladin, Nidhi, Jared, Neeha</font></h1>
+  <h1 align="center"><font size="3"> Created by Chris, Saladin, Nidhi, Pedro, Jared, Neeha</font></h1>
 </div>
 
 

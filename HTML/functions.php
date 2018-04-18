@@ -1,7 +1,6 @@
 <?php
 //load the database configuration file
 require_once 'DBconnect.php';
-
 	session_start();
 	//resets error vars
 	unset($_SESSION['ERROR']);
@@ -14,7 +13,6 @@ require_once 'DBconnect.php';
 		exit();
 	}
 	$_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
-
 if(isset($_POST['importSubmit'])){
 	//get the user's current balance
 	$result2 = $conn->query("SELECT Balance FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
@@ -123,4 +121,4 @@ if(isset($_POST['importSubmit'])){
     }
 }
 //redirect to the listing page
-//header("Location: portfolio.php".$qstring);
+header("Location: portfolio.php".$qstring);

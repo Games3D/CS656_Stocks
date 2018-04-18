@@ -1,7 +1,6 @@
 <?php 	
 	require_once 'DBconnect.php';
 	session_start();
-
 	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		
 		if (isset($_POST['CHANGE'])){
@@ -22,8 +21,8 @@
 			$conn->query("UPDATE np397.SM_Portfolio set name='".$_POST["name"]."' Where portfolioID= '".$_SESSION['CURPORTFOLIO']."';");
 		} elseif (isset($_POST['ADD'])){
 			//echo "ADD";
-			echo "|".$_POST["name"]."|";
-			if (!isset($_POST["name"]) || $_POST["name"]==""){
+			
+			if (!isset($_POST["name"])){
 				$_SESSION["ERROR"] = 'Invaild Parameters';
 				header('Location: Error.php');
 				return;
@@ -106,7 +105,6 @@
 			
 			$conn->query("UPDATE np397.SM_Portfolio set Balance='0' where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");	
 			$conn->query("UPDATE np397.SM_Users set BankBalance='".($BANKBALANCE+$BALANCE)."' where Username='".$_SESSION["USER"]."';");	
-
 			$conn->query("DELETE from np397.SM_Portfolio where portfolioID='".$_POST["portfolio"]."';");
 		} elseif (isset($_POST['BALANCE_ADD'])){
 			//echo "BALANCE_ADD";

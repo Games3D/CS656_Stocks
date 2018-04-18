@@ -44,6 +44,8 @@
 			header( 'Location: Error.php' );
 		}
 		$row2 = $result2->fetch_assoc();
+	//	echo "Current Portfolio Balance: " . $row2[ 'Balance' ];
+
 	?>
 
 	<title>Portfolio Page</title>
@@ -54,12 +56,7 @@
 	<?php include 'menu.php';?>
 	<h2>Users Portfolio</h2>
 
-	<div>
-	<h3>Optimizer</h3>
-	<form method="post" Action="RunOPT.php">
-			<input type="submit" name="RUN" value="Run">
-		</form>
-	</div>
+
 
 	<div class="row">
 		<h3>Balance and Reporting</h3>
@@ -148,7 +145,7 @@
 
 
 		<div class='row'>
-			<h3>Select Protfolio</h3>
+			<h3>Select Portfolio</h3>
 			<form name="SelectPortfolio" method="POST">
 				<?php 
 	$result2 = $conn->query("SELECT * FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."';");
@@ -192,7 +189,7 @@
 						<th>Market Cap</th>
 						<th>Open Price</th>
 						<th>Close Price</th>
-						<th>Gain / Loss</th>
+						<th>Rate Of Return</th>
 						<th>Sell?</th>
 						<th>View History</th>
 					</tr>
@@ -202,6 +199,7 @@
 					if ( $_SESSION[ 'CURPORTFOLIO' ] != "" ) {
 						$result = mysqli_query( $conn, "select * from np397.SM_Stocks Where portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "';" );
 						$numrows = mysqli_num_rows( $result );
+              $TotalStock=0;
 						while ( $row = mysqli_fetch_assoc( $result ) ) {
 							$sss=$row['StockSymbol'];
 							$result2 = $conn->query("SELECT * FROM np397.SM_StockList where Symbol='".strtoupper($sss)."';");
@@ -236,10 +234,27 @@
 							//gets the total bought
 							$resultl = mysqli_query( $conn, "select * from np397.SM_Transaction Where StockID='" . $row[ 'StockID' ] . "';");
 							$TOTALBOUGHT=0;
-							while ( $row3 = mysqli_fetch_assoc($resultl) ) {
+							//$TOTALPORT=0;
+              
+							while ( $row3 = mysqli_fetch_assoc($resultl)) {
 								$TOTALBOUGHT+=$row3['ShareQuantity']*$row3['UnitPrice'];
-								//echo $row3['ShareQuantity']."|".$row3['UnitPrice'];
+								$TOTALPORT=$TOTALPORT+$TOTALBOUGHT;
+							
 							}
+							
+								
+                                                                                  
+							$TotalStock=$TotalStock+1;
+                                                                        
+							$rateofreturn=((($rowSumb['bb']*$rowSuma['aa'])-$TOTALBOUGHT)/$TOTALBOUGHT)*100;
+							$expectedreturn=($rateofreturn*.10);
+							
+							//echo("Expected reutun".$expectedreturn);
+							
+                $SRate=$SRate.round($rateofreturn,2)."|";                                                                             
+						 
+						//echo $TOTALPORT;
+							
 							?>
 					<tr>
 						<td>
@@ -255,23 +270,19 @@
 							<?php echo $rowSumb['bb']*$rowSuma['aa']?>
 						</td>
 						<td>
-							<?php echo $TOTALBOUGHT?>
+							<?php echo $TOTALBOUGHT;?>
 						</td>
 						<td>
-							<?php echo $unitPrice?>
-						</td>
+							<?php echo $unitPrice?></td>
 						<td>
 							<?php echo $MarketCap?>
 						</td>
 						<td>
-							<?php echo $OpenPrice?>
-						</td>
+							<?php echo $OpenPrice?></td>
 						<td>
-							<?php echo $ClosePrice?>
-						</td>
+							<?php echo $ClosePrice?></td>
 						<td>
-							<?php echo ((($rowSumb['bb']*$rowSuma['aa'])-$TOTALBOUGHT)/$TOTALBOUGHT)*100 ."%"?>
-						</td>
+							<?php echo round($rateofreturn,2)."%"?></td>
 						<td>
 							<form method="get" Action="Buy_Sell.php">
 								<input name="StockID" type="hidden" value="<?php echo $row['StockID']?>">
@@ -284,7 +295,6 @@
 								<input type="number" type="hidden" value="-1" name="SELL_NUM">
 								<input type="submit" name="SELL" value="Sell All">
 							</form>
-						</td>
 							<td>
 								<button name="HISTORY" onClick='location.href="Buy_Sell.php?OP=HISTORY&StockID=<?php echo $row['StockID']?>"'>See History</button>
 							</td>
@@ -294,7 +304,34 @@
 			</table>
 		</div>
 		<br>
-
+   <div>
+   <h3>Optimizer</h3>
+   <form method="post" Action="RunOPT.php">
+   
+  <?php
+   
+   if(($row2[ 'Balance' ] /($row2[ 'Balance' ]+$TOTALPORT))>=.10)
+   {
+   $_SESSION['ALLOW']="NO";
+   }
+   else{
+   $_SESSION['ALLOW']="Yes";
+   }
+   
+  if($TotalStock==10)
+  {
+  $OPTIMIZE="<input type=\"submit\" name=\"RUN\" value=\"Run\">";
+  echo $OPTIMIZE;
+  
+  }
+  else{
+  echo "Can't Optimize Portfolio.";
+  $number10=10-$TotalStock;
+  echo "You Need To Purchase ".$number10." More Stocks";
+  }
+   ?>
+</form></div>
+ 
 		<?php
 		//load the database configuration file
 		if ( !empty( $_GET[ 'status' ] ) ) {
@@ -316,23 +353,19 @@
 					$statusMsg = '';
 			}
 		}
-		
-		//gets the user's balance
-		$result2 = $conn->query("SELECT Balance FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
-		if (!$result2) {
-			die('Invalid query: ' . mysql_error());
-			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-			header('Location: Error.php');
-			return;
-		}
-		$row2 = $result2->fetch_assoc();
-		$BALANCE=$row2['Balance'];		
-				
-		if ($BALANCE!=0){ ?>
+		?>
 		<div class="container">
-			<?php if(!empty($statusMsg)){
+			<?php 
+      
+      //echo($TOTALPORT);
+      
+      if(!empty($statusMsg)){
         echo '<div class="alert '.$statusMsgClass.'">'.$statusMsg.'</div>';
     } ?>
+			
+			
+			
+			
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<a href="javascript:void(0);" onclick="$('#importFrm').slideToggle();"><h3>Import and Export</h3></a>
@@ -347,10 +380,11 @@
 					<br>
 					<br>
 					<a href="#" id="xx" style="text-decoration:none;color:#000;background-color:#ddd;border:1px solid #ccc;padding:8px;">Export Table data into Excel</a>
+					
+					
 				</div>
 			</div>
 		</div>
-				<?php } ?>
 
 </body>
 <script>

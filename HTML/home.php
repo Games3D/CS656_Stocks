@@ -15,7 +15,7 @@ ini_set('display_startup_errors', TRUE);
 	//resets error vars
 	unset($_SESSION['ERROR']);
 	unset($_SESSION['ERROR_PATH']);
-	echo($_SESSION["USER"]);
+	
 	
 	if ($_SESSION["authenticated"] == "" or (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800))){
 		session_unset(); 

@@ -4,6 +4,7 @@
 		require_once 'DBconnect.php';
 session_start();
 
+
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {	
 	//echo("SELL!!!".$_GET['SELL_NUM']."|".isset($_GET['SELL'])."|");
 	if (isset($_GET['BUY'])){
@@ -115,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			echo "|stock|";
 			$unitPrice=$FirstPrice;//sets the price to the old price 
 
-			$conn->query("INSERT INTO np397.SM_Stocks (PortfolioID, StockSymbol, StockName, ListPrice, MarketCap, OpenPrice, ClosePrice) VALUES ('".$_SESSION['CURPORTFOLIO']."', '".$_GET['symbol']."', '".$StockName."', '".$ListPrice."', '".$MarketCap."', '".$OpenPrice."', '".$ClosePrice."');");
+			$conn->query("INSERT INTO np397.SM_Stocks (PortfolioID, StockSymbol, StockName) VALUES ('".$_SESSION['CURPORTFOLIO']."', '".$_GET['symbol']."', '".$StockName."');");
 
 			$result3 = $conn->query("SELECT StockID FROM np397.SM_Stocks where StockSymbol='".$_GET['symbol']."' and PortfolioID='".$_SESSION['CURPORTFOLIO']."';");
 			if (!$result3) {
@@ -128,6 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 			$conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$row3["StockID"]."', '".$_GET['amount']."', '".$unitPrice."', CURRENT_TIMESTAMP);");
 			echo $row3["StockID"]."|".$_GET['symbol']."}";
+			
+			echo ("INSERT INTO np397.SM_Stocks (PortfolioID, StockSymbol, StockName) VALUES ('".$_SESSION['CURPORTFOLIO']."', '".$_GET['symbol']."', '".$StockName."');");
 		}
 
 		//Updates balance
@@ -212,6 +215,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		
 		header("Location: portfolio.php");
 	}		elseif (isset($_GET['SELL'])){
+ 
+ if($_SESSION['ALLOW']=="NO")
+{
+$_SESSION["ERROR"] = 'Cannot Sell Stock, You need to withdraw from your portfolio before you can sell.  Too much Cash assests compared to non cash. ';
+header('Location: Error.php');
+}
 		//insert a sell transaction
 		//test to see if stock balance is 0, if yes then remove stock
 

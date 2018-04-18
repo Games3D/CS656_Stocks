@@ -141,12 +141,15 @@ ini_set('display_startup_errors', TRUE);
 	</form>
 </div>
 <br><br>	
+<h3>Change Currency</h3>
 	<div class="row">
 		<a href="portfolio.php"><button>American</button>
 		<a href ="portfoliosing.php"><button>Singapore</button>
 		<a href="portfolioindia.php"><button>India</button>
 			</a>
 	</div>
+	<br>
+	<h1 align="center">India (INR)</h1>
 	<br>
 	<div class="table-responsive">
 <table id="projectSpreadsheet">
@@ -173,16 +176,19 @@ ini_set('display_startup_errors', TRUE);
 	  	$resultSuma=mysqli_query($conn,"select sum(ShareQuantity) as aa from np397.SM_Transaction Where StockID='".$row['StockID']."';");
 		$rowSuma = mysqli_fetch_assoc($resultSuma);
 		$resultSumb=mysqli_query($conn,"select UnitPrice as bb from np397.SM_Transaction Where StockID='".$row['StockID']."';");
-		$rowSumb = mysqli_fetch_assoc($resultSumb);?>
+		$rowSumb = mysqli_fetch_assoc($resultSumb);
+		$converter= 0.015;
+		?>
+		
   <tr>
     <td><?php echo $row['StockName']?></td>
 	<td><?php echo $row['StockSymbol']?></td>
 	<td><?php echo $rowSuma['aa']?></td>
-    <td><?php echo $rowSumb['bb']*$rowSuma['aa']?></td>
-    <td><?php echo $row['ListPrice']?>.</td>
+    <td><?php echo round($rowSumb['bb']*$rowSuma['aa']/$converter,2);?></td>
+    <td><?php echo round($row['ListPrice']/$converter,2);?></td>
     <td><?php echo $row['MarketCap']?></td>
-    <td><?php echo $row['OpenPrice']?>.</td>
-    <td><?php echo $row['ClosePrice']?>.</td>
+    <td><?php echo round($row['OpenPrice']/$converter,2);?></td>
+    <td><?php echo round($row['ClosePrice']/$converter,2);?></td>
 	<td>
 	<form method = "get" Action ="Buy_Sell.php">
 	<input name="StockID" type="hidden" value="<?php echo $row['StockID']?>">
