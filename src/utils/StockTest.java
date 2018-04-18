@@ -230,21 +230,21 @@ public class StockTest {
 		String[] DATA=null;
 		
 		try {
-			DATA=this.Symbol.split("|");
+			DATA=Symbol.split(",");
 		} catch (Exception e1) {
 			return "BAD PARAMS";
 		}
 		if (DATA.length<=1)
 			return "BAD PARAMS";
 		
-		String RR=DATA[0];
-		String ER=DATA[1];
-		String V=DATA[2];
-		String SD=DATA[3];
-		String SR=DATA[4];
-		
+		String pb=DATA[0];
+				
 		//making the file output string
-		String OUTSTRING="some text";
+		String OUTSTRING=String.format("max: %s a + %s b + %s c + %s d + %s e + %s f + %s g + %s h + %s i + %s j;\r\n" + 
+				"\r\n" + 
+				"a + b + c +  d + e + f + g + h + i + j <= 100000;\r\n" + 
+				"( %s - "+pb+" ) a + ( %s - "+pb+" ) b + ( %s - "+pb+" ) c + ( %s - "+pb+" ) d + ( %s - "+pb+" ) e + ( %s - "+pb+" ) f + ( %s - "+pb+" ) g + ( %s - "+pb+" ) h + ( %s - "+pb+") i + ( %s - "+pb+" ) j <= 0",
+				DATA[1], DATA[2], DATA[3], DATA[4], DATA[5], DATA[6], DATA[7], DATA[8], DATA[9], DATA[10], DATA[11], DATA[12], DATA[13], DATA[14], DATA[15], DATA[16], DATA[17], DATA[18], DATA[19], DATA[20]);
 		
 		//connecting to the AFS
 		String host="afs1.njit.edu";
@@ -320,7 +320,7 @@ public class StockTest {
 		//System.out.println(c.firstBuy());
 		//System.out.println(c.getQuote());
 		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
-		StockTest c = new StockTest("0|0|0|0|0");
+		StockTest c = new StockTest("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,");
 		c.run();
 		System.out.println("Done");
 	}
