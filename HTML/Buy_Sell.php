@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			header('Location: Error.php');
 			return;
 		}
-		$DATA = explode(",", $contents);
+		$DATA = explode("`", $contents);
 
 
 		$unitPrice=$DATA[7];
