@@ -6,8 +6,8 @@ session_start();
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {	
-	//echo("SELL!!!".$_GET['SELL_NUM']."|".isset($_GET['SELL'])."|");
-	if (isset($_GET['BUY'])){
+	//echo("SELL!!!".$_GET['BUY']."|".isset($_GET['SELL'])."|");
+	if (isset($_GET['BUY']) || isset($_GET['AUTO_BUY'])){
 		//echo "BUYYYYYYYYYYY";
 		//do a select on stocks to make sure the is added already, if yes then move on, if no then add
 		//insert into transactions
@@ -67,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		}
 		$DATA = explode("`", $contents);
 
-
-		$FirstPrice=$DATAFIRST[10];
+//echo print_r(array_values($DATAFIRST));
+		$FirstPrice=$DATAFIRST[13];
 		$unitPrice=$DATA[7];
 		$StockName=$DATA[2];
 		$ListPrice=$DATA[6];
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$OpenPrice=$DATA[3];
 		$ClosePrice=$DATA[5];
 		$Currency=$DATA[4];
-		
+		//echo "UNIT:".$unitPrice."|";
 		if ($unitPrice==0){
 			$_SESSION["ERROR"] = 'Bad Ticker';
 			header('Location: Error.php');
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		}else{//new stock
 			echo "|stock|";
 			$unitPrice=$FirstPrice;//sets the price to the old price 
-
+//echo "UNIT2:".$unitPrice."|";
 			$conn->query("INSERT INTO np397.SM_Stocks (PortfolioID, StockSymbol, StockName) VALUES ('".$_SESSION['CURPORTFOLIO']."', '".$_GET['symbol']."', '".$StockName."');");
 
 			$result3 = $conn->query("SELECT StockID FROM np397.SM_Stocks where StockSymbol='".$_GET['symbol']."' and PortfolioID='".$_SESSION['CURPORTFOLIO']."';");
@@ -136,7 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		//Updates balance
 		$result2 = $conn->query("UPDATE np397.SM_Portfolio set Balance='".($BALANCE-($_GET['amount']*$unitPrice))."' where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 
-		header("Location: portfolio.php");
+		if (isset($_GET['AUTO_BUY']))
+			header("Location: functions.php");
+		else
+			header("Location: portfolio.php");
 	} elseif (isset($_GET['sellF'])){
 		$SHARES=$_GET['SELL_NUM'];	
 		
@@ -158,8 +161,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		}
 		$row2 = $result2->fetch_assoc();
 
-		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$row2['StockSymbol'];
+		$sss=$row2['StockSymbol'];
+		$result2 = $conn->query("SELECT * FROM np397.SM_StockList where Symbol='".strtoupper($row2['StockSymbol'])."';");
+		$row22 = $result2->fetch_assoc();
+		if ($row22['Market']=="NSE"){
+			$sss=$row2['StockSymbol'].".ns";
+		}
+		
+		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$sss;
 		$contents = file_get_contents($url);
+		
 	//	echo $contents;
 		//If $contents is not a boolean FALSE value.
 		if($contents == false){
@@ -168,10 +179,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			return;
 		}
 		$DATA = explode("`", $contents);
-
+echo print_r(array_values($DATA));
 
 		$unitPrice=$DATA[7];
-	//	echo $unitPrice;
+		echo $unitPrice;
 
 		//gets the user's balance
 		$result2 = $conn->query("SELECT BankBalance FROM np397.SM_Users where Username='".$_SESSION["USER"]."';");
@@ -328,6 +339,6 @@ header('Location: Error.php');
 
 		</html>
 	<?php
-}
+	}
 }
 ?>
