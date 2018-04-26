@@ -20,7 +20,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			header('Location: Error.php');
 			return;
 		}
-
+		
+		//check to make sure you dont have more then 10 stocks already
+		$resultSuma = mysqli_query( $conn, "select count(StockID) as aa from np397.SM_Stocks Where PortfolioID='" . $_SESSION['CURPORTFOLIO'] . "';" );
+		$rowSuma = mysqli_fetch_assoc( $resultSuma );
+//echo "asdfd".$rowSuma['aa']."|";
+		if ($rowSuma['aa'] >= 10){
+			$_SESSION["ERROR"] = 'You can`t buy more because you already have 10 stocks';
+			header('Location: Error.php');
+			return;
+		}
+					
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//Check the 70/30 rule here
+		//select count(of .ns stock) from SM_Stocks join SM_StockList where PortfolioID= cur
+		//select count(of american stock) from SM_Stocks join SM_StockList where PortfolioID= cur
+		//if american is more then 7 dont allow another american
+		//if .ns is more then 7 dont allow another .ns
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		//check the 90/10 rule here, in sell, and when adding or removing money
+		//sum up all current portfolio's total owned amount and compare to the portfolio balance
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		//Check to see if the stock is valid
 			$result2 = $conn->query("SELECT count(*) as total FROM np397.SM_StockList where Symbol='".strtoupper($_GET['symbol'])."';");
 			if (!$result2) {
@@ -226,7 +277,15 @@ echo print_r(array_values($DATA));
 		
 		header("Location: portfolio.php");
 	}		elseif (isset($_GET['SELL'])){
- 
+ $resultSuma = mysqli_query( $conn, "select count(StockID) as aa from np397.SM_Stocks Where PortfolioID='" . $_SESSION['CURPORTFOLIO'] . "';" );
+		$rowSuma = mysqli_fetch_assoc( $resultSuma );
+//echo "asdfd".$rowSuma['aa']."|";
+		if ($rowSuma['aa'] < 7){
+			$_SESSION["ERROR"] = 'You can`t sell because you dont have atleast 7 stocks';
+			header('Location: Error.php');
+			return;
+		}
+		
  if($_SESSION['ALLOW']=="NO")
 {
 $_SESSION["ERROR"] = 'Cannot Sell Stock, You need to withdraw from your portfolio before you can sell.  Too much Cash assests compared to non cash. ';

@@ -167,12 +167,12 @@
 	 ?>
 			</form>
 			<br>
-			<div class="row">
+		<!--	<div class="row">
 				<a href="portfolio.php"><button>American</button>
 				<a href ="portfoliosing.php"><button>Singapore</button>
 				<a href="portfolioindia.php"><button>India</button>
 				</a>
-			</div>
+			</div>-->
 		</div>
 		<br><br>
 

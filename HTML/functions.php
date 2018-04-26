@@ -35,8 +35,23 @@ if(isset($_POST['importSubmit'])){
             
 			//parse data from csv file line by line
 			while(($line = fgetcsv($csvFile)) !== FALSE){
-				
-			echo $line[0].$line[1].$line[2];	
+				$_SESSION["AUTO_B_S"]=$line[0].$line[1].$line[2]."`".$_SESSION["AUTO_B_S"];
+			}
+            //close opened csv file
+            fclose($csvFile);
+		  
+			header("Location: functions.php");
+			$qstring = '?status=succ';
+        }else{
+            $qstring = '?status=err';
+        }
+    }else{
+        $qstring = '?status=invalid_file';
+    }
+} else {
+	if (sizeof($_SESSION["AUTO_B_S"])>0){
+		echo $_SESSION["AUTO_B_S"];
+		
 				if ($line[0]=="BUY"){
 ?>
 					<form id="buyForm" method="get" Action="Buy_Sell.php">
@@ -56,18 +71,8 @@ if(isset($_POST['importSubmit'])){
 				} else{
 					echo "ERROR";
 				}
-			}
-            //close opened csv file
-            fclose($csvFile);
-		  
-			$qstring = '?status=succ';
-        }else{
-            $qstring = '?status=err';
-        }
-    }else{
-        $qstring = '?status=invalid_file';
-    }
+	}
 }
 //redirect to the listing page
-//header("Location: portfolio.php".$qstring);
+header("Location: portfolio.php".$qstring);
 ?>
