@@ -5,13 +5,32 @@ session_start();
 
 
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   //get request for stock info
-		$urlFirst = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=RUN&PARAMS=0,2,1,5,4,7,8,7,4,5,1,0,0,2,0,1,3,4,0,5,8,';
 
-		$contentsFirst = file_get_contents($urlFirst);
+	$urlFirst = "https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=RUN&PARAMS=";
+
+	$result = $conn->query("SELECT * FROM `SM_StockList`
+							 JOIN `SM_Stocks` ON SM_Stocks.StockSymbol = SM_StockList.Symbol
+							 JOIN `SM_Portfolio` ON SM_Portfolio.portfolioID = SM_Stocks.PortfolioID
+							 WHERE SM_Portfolio.Username = '".$_SESSION["USER"]."';");
+
+	while($row = $result->fetch_assoc())
+	{
+		if($row["ER"] == null){
+			$urlFirst .= "0,";
+		}else{
+			$urlFirst .= $row["ER"].',';
+		}
+	}
+
+	echo $urlFirst;
 
 
+
+		
+
+		/*$contentsFirst = file_get_contents($urlFirst);
 
 		//If $contents is not a boolean FALSE value.
 
@@ -23,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 			return;
 
-		}
+		}*/
 
 		$DATAFIRST = explode("`", $contentsFirst);
 
