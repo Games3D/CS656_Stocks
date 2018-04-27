@@ -7,6 +7,9 @@ session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {	
 	//echo("SELL!!!".$_GET['BUY']."|".isset($_GET['SELL'])."|");
+//*************************************************************************************
+//BUY
+//*************************************************************************************
 	if (isset($_GET['BUY']) || isset($_GET['AUTO_BUY'])){
 		//echo "BUYYYYYYYYYYY";
 		//do a select on stocks to make sure the is added already, if yes then move on, if no then add
@@ -187,10 +190,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		//Updates balance
 		$result2 = $conn->query("UPDATE np397.SM_Portfolio set Balance='".($BALANCE-($_GET['amount']*$unitPrice))."' where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 
-		if (isset($_GET['AUTO_BUY']))
-			header("Location: functions.php");
-		else
-			header("Location: portfolio.php");
+		header("Location: portfolio.php");
+//*************************************************************************************
+//SELL
+//*************************************************************************************
 	} elseif (isset($_GET['sellF'])){
 		$SHARES=$_GET['SELL_NUM'];	
 		
@@ -335,6 +338,9 @@ header('Location: Error.php');
 
 </html>
 <?php
+//*************************************************************************************
+//HISTORY
+//*************************************************************************************
 } elseif ( $_GET[ 'OP' ] == 'HISTORY' ) {
 	//write page to display history of transactions for this stock
 	$result2 = $conn->query( "SELECT * FROM np397.SM_Stocks where StockID='" . $_GET[ "StockID" ] . "';" );
