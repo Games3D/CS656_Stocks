@@ -91,17 +91,18 @@ public class StockTest {
 		}
 	}
 
-	String Crumb="", Symbol="";
+	String Crumb="";
+	static String Symbol="";
 	HttpClient client = HttpClientBuilder.create().build();
 	HttpClientContext context = HttpClientContext.create();
 
 	public StockTest(String symbol) {
 		//setup
-		this.Symbol=symbol;
-		
+		Symbol=symbol;
+
 		if (symbol.contains(","))//skips the rest of this if this is for running R
 			return;
-		
+
 		this.client = HttpClientBuilder.create().build();
 		this.context = HttpClientContext.create();
 		this.context.setCookieStore(new BasicCookieStore());
@@ -136,7 +137,7 @@ public class StockTest {
 		String strFileContents = ""; 
 
 		//gets the data
-		String url = String.format("https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%s&period2=%s&interval=1d&events=history&crumb=%s", this.Symbol, startDate, endDate, this.Crumb);
+		String url = String.format("https://query1.finance.yahoo.com/v7/finance/download/%s?period1=%s&period2=%s&interval=1d&events=history&crumb=%s", Symbol, startDate, endDate, this.Crumb);
 		HttpGet request = new HttpGet(url);
 
 		request.addHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
@@ -176,7 +177,7 @@ public class StockTest {
 		String out="";
 
 		//gets the data
-		String url = String.format("https://query1.finance.yahoo.com/v7/finance/quote?symbols=%s", this.Symbol);
+		String url = String.format("https://query1.finance.yahoo.com/v7/finance/quote?symbols=%s", Symbol);
 		HttpGet request = new HttpGet(url);
 
 		request.addHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13");
@@ -225,104 +226,139 @@ public class StockTest {
 		return out;
 	}
 
-	public String run() {
-		//getting params from the web
-		String[] DATA=null;
+	public class R implements Runnable {
+		private String value="";
+		private String Symbol="";
+
+		public R(String symbol) {this.Symbol=symbol;}
+		public void run() {
+			String rt="";
+			String[] DATA=null;
+
+			try {
+				DATA=Symbol.split(",");
+			} catch (Exception e1) {
+				value="BAD PARAMS";
+				return;
+			}
+			if (DATA.length<=1) {
+				value="BAD PARAMS";
+				return;
+			}
+
+			double pb=Double.parseDouble(DATA[0]);
+
+			//making the file output string
+			String OUTSTRING=String.format("max: %s a + %s b + %s c + %s d + %s e + %s f + %s g + %s h + %s i + %s j;\r\n" + 
+					"\r\n" + 
+					"a + b + c +  d + e + f + g + h + i + j <= 100000;\r\n" + 
+					(Double.parseDouble(DATA[11])-pb)+" a + "+(Double.parseDouble(DATA[12])-pb)+" b + "+(Double.parseDouble(DATA[13])-pb)+" c + "+(Double.parseDouble(DATA[14])-pb)+" d + "+(Double.parseDouble(DATA[15])-pb)+" e + "+(Double.parseDouble(DATA[16])-pb)+" f + "+(Double.parseDouble(DATA[17])-pb)+" g + "+(Double.parseDouble(DATA[18])-pb)+" h + "+(Double.parseDouble(DATA[19])-pb)+" i + "+(Double.parseDouble(DATA[20])-pb)+" j <= 0;",
+					DATA[1], DATA[2], DATA[3], DATA[4], DATA[5], DATA[6], DATA[7], DATA[8], DATA[9], DATA[10]);
+
+			//connecting to the AFS
+			String host="afs1.njit.edu";
+			String user="jp834";
+			String password="Mynjit19";
+			String command1="module load R-Project/3.2.4; R < /afs/cad.njit.edu/u/j/p/jp834/public_html/run.r --no-save";
+			try{
+
+				java.util.Properties config = new java.util.Properties(); 
+				config.put("StrictHostKeyChecking", "no");
+				JSch jsch = new JSch();
+				Session session=jsch.getSession(user, host, 22);
+				session.setPassword(password);
+				session.setConfig(config);
+				session.connect();
+				System.out.println("Connected to AFS");
+
+				//write file to server
+				Channel channel = session.openChannel("sftp");
+				channel.connect();
+
+				System.out.println("SFTP Connection Opened\n");
+
+				ChannelSftp channelSftp = (ChannelSftp) channel;
+				channelSftp.cd("/tmp");
+				try (OutputStream out = channelSftp.put("/afs/cad.njit.edu/u/j/p/jp834/public_html/TESTR.txt")) {
+					OutputStreamWriter writer = new OutputStreamWriter(out);
+					writer.write(OUTSTRING);
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				channel.disconnect();
+				channelSftp.disconnect();
+				System.out.println("File has been written\n");
+
+
+				//send run command
+				channel=session.openChannel("exec");
+				((ChannelExec)channel).setCommand(command1);
+				channel.setInputStream(null);
+				((ChannelExec)channel).setErrStream(System.err);
+				InputStream in=channel.getInputStream();
+				channel.connect();
+
+				System.out.println("Command Connection Opened\n---------------");
+
+				byte[] tmp=new byte[1024];
+				while(true){
+					while(in.available()>0){
+						int i=in.read(tmp, 0, 1024);
+						if(i<0)break;
+						//System.out.print(+new String(tmp, 0, i));
+						rt=new String(tmp, 0, i);
+					}
+					if(channel.isClosed()){
+						System.out.println("\n---------------\nexit-status: "+channel.getExitStatus());
+						break;
+					}
+					try{Thread.sleep(1000);}catch(Exception ee){}
+				}
+				channel.disconnect();
+				session.disconnect();
+				System.out.println("AFS disconnected");
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+
+			value=rt.substring(rt.indexOf("get.variables(model1)")+23,rt.length()-4);
+			//System.out.println(value);
+		}
+		public String getValue() {
+			return value;
+		}
+	}
+
+	public String runR() {
+		R foo = new R(Symbol);
+		new Thread(foo).start();
 		
 		try {
-			DATA=Symbol.split(",");
-		} catch (Exception e1) {
-			return "BAD PARAMS";
-		}
-		if (DATA.length<=1)
-			return "BAD PARAMS";
-		
-		String pb=DATA[0];
-				
-		//making the file output string
-		String OUTSTRING=String.format("max: %s a + %s b + %s c + %s d + %s e + %s f + %s g + %s h + %s i + %s j;\r\n" + 
-				"\r\n" + 
-				"a + b + c +  d + e + f + g + h + i + j <= 100000;\r\n" + 
-				"( %s - "+pb+" ) a + ( %s - "+pb+" ) b + ( %s - "+pb+" ) c + ( %s - "+pb+" ) d + ( %s - "+pb+" ) e + ( %s - "+pb+" ) f + ( %s - "+pb+" ) g + ( %s - "+pb+" ) h + ( %s - "+pb+") i + ( %s - "+pb+" ) j <= 0",
-				DATA[1], DATA[2], DATA[3], DATA[4], DATA[5], DATA[6], DATA[7], DATA[8], DATA[9], DATA[10], DATA[11], DATA[12], DATA[13], DATA[14], DATA[15], DATA[16], DATA[17], DATA[18], DATA[19], DATA[20]);
-		
-		//connecting to the AFS
-		String host="afs1.njit.edu";
-		String user="jp834";
-		String password="Mynjit19";
-		String command1="cat /afs/cad.njit.edu/u/j/p/jp834/public_html/TESTR.txt";//"ls -ltr";
-		try{
-
-			java.util.Properties config = new java.util.Properties(); 
-			config.put("StrictHostKeyChecking", "no");
-			JSch jsch = new JSch();
-			Session session=jsch.getSession(user, host, 22);
-			session.setPassword(password);
-			session.setConfig(config);
-			session.connect();
-			System.out.println("Connected to AFS");
-
-			//write file to server
-			Channel channel = session.openChannel("sftp");
-			channel.connect();
-
-			System.out.println("SFTP Connection Opened\n");
-			
-			ChannelSftp channelSftp = (ChannelSftp) channel;
-			channelSftp.cd("/tmp");
-			try (OutputStream out = channelSftp.put("/afs/cad.njit.edu/u/j/p/jp834/public_html/TESTR.txt")) {
-			    OutputStreamWriter writer = new OutputStreamWriter(out);
-			    writer.write(OUTSTRING);
-			    writer.close();
-			} catch (IOException e) {
-			    e.printStackTrace();
-			}
-			channel.disconnect();
-			channelSftp.disconnect();
-			System.out.println("File has been written\n");
-			
-			
-			//send run command
-			channel=session.openChannel("exec");
-			((ChannelExec)channel).setCommand(command1);
-			channel.setInputStream(null);
-			((ChannelExec)channel).setErrStream(System.err);
-			InputStream in=channel.getInputStream();
-			channel.connect();
-			
-			System.out.println("Command Connection Opened\n---------------");
-			
-			byte[] tmp=new byte[1024];
-			while(true){
-				while(in.available()>0){
-					int i=in.read(tmp, 0, 1024);
-					if(i<0)break;
-					System.out.print(new String(tmp, 0, i));
-				}
-				if(channel.isClosed()){
-					System.out.println("\n---------------\nexit-status: "+channel.getExitStatus());
-					break;
-				}
-				try{Thread.sleep(1000);}catch(Exception ee){}
-			}
-			channel.disconnect();
-			session.disconnect();
-			System.out.println("AFS disconnected");
-		}catch(Exception e){
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
-		return "";
+		String value = foo.getValue();
+		
+		if (value.equals("BAD PARAMS")) {
+			return "BAD PARAMS";
+		} else if (value.equals("")) {
+			return "TIME OUT";
+		} else {
+			return value;
+		}
 	}
 
 	public static void main (String[] args) {
-		//StockTest c = new StockTest("zeel.ns");
-		//System.out.println(c.firstBuy());
-		//System.out.println(c.getQuote());
-		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
-		StockTest c = new StockTest("0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,");
-		c.run();
-		System.out.println("Done");
+		StockTest c = new StockTest("zeel.ns");
+		System.out.println(c.firstBuy());
+		System.out.println(c.getQuote());
+		System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
+		StockTest c2 = new StockTest("10,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,900,100,100,100,");
+		System.out.println(c2.runR());
+
 	}
 
 }
