@@ -214,6 +214,18 @@ if(isset($_POST['importSubmit'])){
 //SELL
 //*************************************************************************************	
 				} elseif ($line[0]=="SELL"){
+		$result2 = $conn->query("select * from np397.SM_Stocks Where StockSymbol='".$line[1]."' and PortfolioID='".$_SESSION['CURPORTFOLIO']."';");
+		if (!$result2) {
+			die('Invalid query: ' . mysql_error());
+			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+			header('Location: Error.php');
+			return;
+		}
+		$row2 = $result2->fetch_assoc();
+
+		$line[1]=$row2['StockID'];
+					
+					
 			$SHARES=$line[2];				
 		if ($SHARES==-1){
 			$resultSuma = mysqli_query( $conn, "select sum(ShareQuantity) as aa from np397.SM_Transaction Where StockID='" . $line[1] . "';" );

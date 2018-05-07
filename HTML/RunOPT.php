@@ -8,7 +8,7 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   //get request for stock info
 
-	$urlFirst = "https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=RUN&PARAMS=";
+	$urlFirst = "https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=AFS&PARAMS=";
 
 	$result = $conn->query("SELECT * FROM `SM_StockList`
 							 JOIN `SM_Stocks` ON SM_Stocks.StockSymbol = SM_StockList.Symbol
