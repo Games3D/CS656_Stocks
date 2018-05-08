@@ -66,7 +66,7 @@ if(!empty($_POST["register-user"])) {
 				    $mail->Subject = 'Stock Market Account Confirmation';
 
 				    //Change the body message REPLACE THE LINK WITH CHRIS' (or whoevers we are going to use for demo) LINK
-				    $mail->Body = 'Please confirm your account. Click on the link to confirm your account https://web.njit.edu/~np397/StockMarketTest/confirm.php?user='.strtolower($_POST["username"]);
+				    $mail->Body = 'Please confirm your account. Click on the link to confirm your account https://web.njit.edu/~jp834/CS673/confirm.php?user='.strtolower($_POST["username"]);
 
 				    $mail->setFrom('CS673SchoolProject@gmail.com', 'CS673Project');
 

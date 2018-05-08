@@ -48,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		//select count(of american stock) from SM_Stocks join SM_StockList where PortfolioID= cur
 		//if american is more then 7 dont allow another american
 		//if .ns is more then 7 dont allow another .ns
+		if ()
 		$result2 = $conn->query("SELECT sum(SM_Transaction.ShareQuantity * SM_Transaction.UnitPrice) as aa FROM np397.SM_Stocks join np397.SM_Transaction on SM_Stocks.StockID = SM_Transaction.StockID join np397.SM_StockList on SM_Stocks.StockSymbol = SM_StockList.Symbol where SM_StockList.Market='DOW' and SM_Stocks.portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 		$row22 = $result2->fetch_assoc();
 		$DOW=$row22['aa'];

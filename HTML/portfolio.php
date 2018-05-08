@@ -79,6 +79,7 @@
 		}
 		$row2 = $result2->fetch_assoc();
 		echo "Current Portfolio Balance: " . $row2[ 'Balance' ];
+		$_SESSION['sesbankbal'] = $row2[ 'Balance' ];
 		?>
 		<form method="post" Action="portfolioEdit.php">
 			Amount of $ to add to your balance: <input name="funds" type="number">
@@ -231,6 +232,8 @@
 							$resultSumb = mysqli_query( $conn, "select UnitPrice as bb from np397.SM_Transaction Where StockID='" . $row[ 'StockID' ] . "';" );
 							$rowSumb = mysqli_fetch_assoc( $resultSumb );
 							
+							
+								
 							//gets the total bought
 							$resultl = mysqli_query( $conn, "select * from np397.SM_Transaction Where StockID='" . $row[ 'StockID' ] . "';");
 							$TOTALBOUGHT=0;
@@ -238,10 +241,11 @@
               
 							while ( $row3 = mysqli_fetch_assoc($resultl)) {
 								$TOTALBOUGHT+=$row3['ShareQuantity']*$row3['UnitPrice'];
-								$TOTALPORT=$TOTALPORT+$TOTALBOUGHT;
+								
 							
 							}
-							
+							$TOTALPORT=$TOTALPORT+($rowSuma['aa']*$rowSumb['bb']);
+							$jp_total+=$rowSuma['aa']*$rowSumb['bb'];
 								
                                                                                   
 							$TotalStock=$TotalStock+1;
@@ -299,7 +303,9 @@
 								<button name="HISTORY" onClick='location.href="Buy_Sell.php?OP=HISTORY&StockID=<?php echo $row['StockID']?>"'>See History</button>
 							</td>
 					</tr>
-					<?php }}?>
+					<?php }} 
+					echo ($_SESSION['sesbankbal']+$TOTALPORT)*0.75." is 75% of ".$TOTALPORT;
+					?>
 				</tbody>
 			</table>
 		</div>
