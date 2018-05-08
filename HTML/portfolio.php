@@ -18,11 +18,9 @@
 	ini_set( 'display_startup_errors', TRUE );
 	require_once 'DBconnect.php';
 	session_start();
-
 	//resets error vars
 	unset( $_SESSION[ 'ERROR' ] );
 	unset( $_SESSION[ 'ERROR_PATH' ] );
-
 	if ( $_SESSION[ "authenticated" ] == ""
 		or( isset( $_SESSION[ 'LAST_ACTIVITY' ] ) && ( time() - $_SESSION[ 'LAST_ACTIVITY' ] > 1800 ) ) ) {
 		session_unset();
@@ -30,9 +28,7 @@
 		header( "Location: index.php" );
 		exit();
 	}
-
 	$_SESSION[ 'LAST_ACTIVITY' ] = time(); // update last activity time stamp
-
 	if ( $_SERVER[ 'REQUEST_METHOD' ] == 'POST' ) {
 		$_SESSION[ 'CURPORTFOLIO' ] = $_POST[ 'portfolio' ];
 	}
@@ -45,7 +41,6 @@
 		}
 		$row2 = $result2->fetch_assoc();
 	//	echo "Current Portfolio Balance: " . $row2[ 'Balance' ];
-
 	?>
 
 	<title>Portfolio Page</title>
@@ -210,7 +205,6 @@
 							}
 							$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$sss;
 							$contents = file_get_contents($url);
-
 							//If $contents is not a boolean FALSE value.
 							if($contents == false){
 								$_SESSION["ERROR"] = 'Get request error';
@@ -245,7 +239,6 @@
 							
 							}
 							$TOTALPORT=$TOTALPORT+($rowSuma['aa']*$rowSumb['bb']);
-							$jp_total+=$rowSuma['aa']*$rowSumb['bb'];
 								
                                                                                   
 							$TotalStock=$TotalStock+1;
@@ -316,7 +309,10 @@
    
   <?php
    
-   if(($row2[ 'Balance' ] /($row2[ 'Balance' ]+$TOTALPORT))>=.10)
+   echo (($_SESSION['sesbankbal']+$TOTALPORT)*.10);
+   
+   
+   if((($_SESSION['sesbankbal']+$TOTALPORT)*.10)<($_SESSION['sesbankbal']))
    {
    $_SESSION['ALLOW']="NO";
    }
@@ -399,42 +395,29 @@
 	$( '#importFrm' ).slideToggle();
 	$( document ).ready( function () {
 		function exportTableToCSV( $table, filename ) {
-
 			var $rows = $table.find( 'tr:has(td),tr:has(th)' ),
-
 				// Temporary delimiter characters unlikely to be typed by keyboard
 				// This is to avoid accidentally splitting the actual contents
 				tmpColDelim = String.fromCharCode( 11 ), // vertical tab character
 				tmpRowDelim = String.fromCharCode( 0 ), // null character
-
 				// actual delimiter characters for CSV format
 				colDelim = '","',
 				rowDelim = '"\r\n"',
-
 				// Grab text from table into CSV formatted string
 				csv = '"' + $rows.map( function ( i, row ) {
 					var $row = $( row ),
 						$cols = $row.find( 'td,th' );
-
 					return $cols.map( function ( j, col ) {
 						var $col = $( col ),
 							text = $col.text();
-
 						return text.replace( /"/g, '""' ); // escape double quotes
-
 					} ).get().join( tmpColDelim );
-
 				} ).get().join( tmpRowDelim )
 				.split( tmpRowDelim ).join( rowDelim )
 				.split( tmpColDelim ).join( colDelim ) + '"',
-
-
-
 				// Data URI
 				csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent( csv );
-
 			console.log( csv );
-
 			if ( window.navigator.msSaveBlob ) { // IE 10+
 				//alert('IE' + csv);
 				window.navigator.msSaveOrOpenBlob( new Blob( [ csv ], {
@@ -448,12 +431,9 @@
 				} );
 			}
 		}
-
 		// This must be a hyperlink
 		$( "#xx" ).on( 'click', function ( event ) {
-
 			exportTableToCSV.apply( this, [ $( '#projectSpreadsheet' ), 'export.csv' ] );
-
 			// IF CSV, don't do event.preventDefault() or return false
 			// We actually need this to be a typical hyperlink
 		} );
