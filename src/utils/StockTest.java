@@ -353,9 +353,9 @@ public class StockTest {
 
 	public static void main (String[] args) {
 		StockTest c = new StockTest("zeel.ns");
-		System.out.println(c.firstBuy());
-		System.out.println(c.getQuote());
-		System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
+		//System.out.println(c.firstBuy());
+		//System.out.println(c.getQuote());
+		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
 		StockTest c2 = new StockTest("0.005045997,0.005045997,-0.000995944,0.003802902,0.000751952,0.004520559,0.000442582,0.000217747,0.002582707,0.003047644,0.006611401,0.003667151,100,100,100,100,100,900,100,100,100,");
 		System.out.println(c2.runR());
 

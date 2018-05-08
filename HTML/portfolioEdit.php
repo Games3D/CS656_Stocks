@@ -62,7 +62,7 @@
 			
 		}  elseif (isset($_POST['deleteF'])){
 			
-			if (!isset($_POST["portfolio"])){
+			if (!isset($_POST["portfolio"]) || $_POST["portfolio"]==""){
 				$_SESSION["ERROR"] = 'Invaild Parameters';
 				header('Location: Error.php');
 				return;

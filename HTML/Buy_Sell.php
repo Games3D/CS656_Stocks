@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		//echo "A:".$_GET['amount'];
 		//echo "P:".$_SESSION['CURPORTFOLIO'];
 
-		if (!isset($_SESSION['CURPORTFOLIO']) || !isset($_GET['symbol']) || !isset($_GET['amount'])){//error checking
+		if (!isset($_SESSION['CURPORTFOLIO']) || !isset($_GET['symbol']) || !isset($_GET['amount']) || $_GET['amount']<=0){//error checking
 			$_SESSION["ERROR"] = 'Buy parameters are invalid: ' . mysql_error();
 			header('Location: Error.php');
 			return;
@@ -278,7 +278,7 @@ echo print_r(array_values($DATA));
 		}
 		$row2 = $result2->fetch_assoc();
 
-		if ($row2['aa']<$SHARES || ($row2['aa']-$SHARES)<0){
+		if ($row2['aa']<$SHARES || ($row2['aa']-$SHARES)<0 || $SHARES<=0){
 			$_SESSION["ERROR"] = 'not enough shares to sell';
 			header('Location: Error.php');
 			return;
