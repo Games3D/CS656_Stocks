@@ -195,7 +195,12 @@
 					if ( $_SESSION[ 'CURPORTFOLIO' ] != "" ) {
 						$result = mysqli_query( $conn, "select * from np397.SM_Stocks Where portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "';" );
 						$numrows = mysqli_num_rows( $result );
-              $TotalStock=0;
+			  $TotalStock=0;
+
+						  $myarray=array(0,0,0,0,0,0,0,0,0,0);
+						  $_SESSION['finalarray']=array(0,0,0,0,0,0,0,0,0,0);
+						  $counter=0;
+
 						while ( $row = mysqli_fetch_assoc( $result ) ) {
 							$sss=$row['StockSymbol'];
 							$result2 = $conn->query("SELECT * FROM np397.SM_StockList where Symbol='".strtoupper($sss)."';");
@@ -238,14 +243,17 @@
 								
 							
 							}
-							$TOTALPORT=$TOTALPORT+($rowSuma['aa']*$rowSumb['bb']);
+							$_SESSION['TOTALPORT']=$TOTALPORT+($rowSuma['aa']*$unitPrice);
 								
                                                                                   
 							$TotalStock=$TotalStock+1;
                                                                         
-							$rateofreturn=((($rowSumb['bb']*$rowSuma['aa'])-$TOTALBOUGHT)/$TOTALBOUGHT)*100;
+							$rateofreturn=((($unitPrice*$rowSuma['aa'])-$TOTALBOUGHT)/$TOTALBOUGHT)*100;
 							$expectedreturn=($rateofreturn*.10);
 							
+							
+							$myarray[$counter]=($unitPrice*$rowSuma['aa']);
+							$counter=$counter+1;
 							//echo("Expected reutun".$expectedreturn);
 							
                 $SRate=$SRate.round($rateofreturn,2)."|";                                                                             
@@ -264,7 +272,7 @@
 							<?php echo $rowSuma['aa']?>
 						</td>
 						<td>
-							<?php echo $rowSumb['bb']*$rowSuma['aa']?>
+							<?php echo $unitPrice*$rowSuma['aa']?>
 						</td>
 						<td>
 							<?php echo $TOTALBOUGHT;?>
@@ -297,7 +305,7 @@
 							</td>
 					</tr>
 					<?php }} 
-					echo ($_SESSION['sesbankbal']+$TOTALPORT)*0.75." is 75% of ".$TOTALPORT;
+					//echo ($_SESSION['sesbankbal']+$TOTALPORT)*0.75." is 75% of ".$TOTALPORT;
 					?>
 				</tbody>
 			</table>
@@ -309,8 +317,16 @@
    
   <?php
    
-   echo (($_SESSION['sesbankbal']+$TOTALPORT)*.10);
-   
+   $_SESSION['finalarray'][0]=$myarray[0];
+   $_SESSION['finalarray'][1]=$myarray[1];
+   $_SESSION['finalarray'][2]=$myarray[2];
+   $_SESSION['finalarray'][3]=$myarray[3];
+   $_SESSION['finalarray'][4]=$myarray[4];
+   $_SESSION['finalarray'][5]=$myarray[5];
+   $_SESSION['finalarray'][6]=$myarray[6];
+   $_SESSION['finalarray'][7]=$myarray[7];
+   $_SESSION['finalarray'][8]=$myarray[8];
+   $_SESSION['finalarray'][9]=$myarray[9];
    
    if((($_SESSION['sesbankbal']+$TOTALPORT)*.10)<($_SESSION['sesbankbal']))
    {
