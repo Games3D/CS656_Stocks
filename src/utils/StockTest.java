@@ -245,16 +245,84 @@ public class StockTest {
 				value="BAD PARAMS";
 				return;
 			}
-
+//r1 p1 b1 t
 			double pb=Double.parseDouble(DATA[0]);
 
 			//making the file output string
-			String OUTSTRING=String.format("max: %s a + %s b + %s c + %s d + %s e + %s f + %s g + %s h + %s i + %s j;\r\n" + 
-					"\r\n" + 
-					"a + b + c +  d + e + f + g + h + i + j <= 100000;\r\n" + 
-					(Double.parseDouble(DATA[11])-pb)+" a + "+(Double.parseDouble(DATA[12])-pb)+" b + "+(Double.parseDouble(DATA[13])-pb)+" c + "+(Double.parseDouble(DATA[14])-pb)+" d + "+(Double.parseDouble(DATA[15])-pb)+" e + "+(Double.parseDouble(DATA[16])-pb)+" f + "+(Double.parseDouble(DATA[17])-pb)+" g + "+(Double.parseDouble(DATA[18])-pb)+" h + "+(Double.parseDouble(DATA[19])-pb)+" i + "+(Double.parseDouble(DATA[20])-pb)+" j <= 0;",
-					DATA[1], DATA[2], DATA[3], DATA[4], DATA[5], DATA[6], DATA[7], DATA[8], DATA[9], DATA[10]);
-
+			//String OUTSTRING=String.format("max: %s a + %s b + %s c + %s d + %s e + %s f + %s g + %s h + %s i + %s j;\r\n" + 
+			//		"\r\n" + 
+			//		"a + b + c +  d + e + f + g + h + i + j <= 100000;\r\n" + 
+			//		(Double.parseDouble(DATA[11])-pb)+" a + "+(Double.parseDouble(DATA[12])-pb)+" b + "+(Double.parseDouble(DATA[13])-pb)+" c + "+(Double.parseDouble(DATA[14])-pb)+" d + "+(Double.parseDouble(DATA[15])-pb)+" e + "+(Double.parseDouble(DATA[16])-pb)+" f + "+(Double.parseDouble(DATA[17])-pb)+" g + "+(Double.parseDouble(DATA[18])-pb)+" h + "+(Double.parseDouble(DATA[19])-pb)+" i + "+(Double.parseDouble(DATA[20])-pb)+" j <= 0;",
+			//		DATA[1], DATA[2], DATA[3], DATA[4], DATA[5], DATA[6], DATA[7], DATA[8], DATA[9], DATA[10]);
+			String T=DATA[30];
+			String B=DATA[31];
+			
+			String P1=DATA[0];
+			String P2=DATA[3];
+			String P3=DATA[6];
+			String P4=DATA[9];
+			String P5=DATA[12];
+			String P6=DATA[15];
+			String P7=DATA[18];
+			String P8=DATA[21];
+			String P9=DATA[24];
+			String P10=DATA[27];
+			
+			String R1=DATA[1];
+			String R2=DATA[4];
+			String R3=DATA[7];
+			String R4=DATA[10];
+			String R5=DATA[13];
+			String R6=DATA[16];
+			String R7=DATA[19];
+			String R8=DATA[22];
+			String R9=DATA[25];
+			String R10=DATA[28];
+			
+			String B1=DATA[2];
+			String B2=DATA[5];
+			String B3=DATA[8];
+			String B4=DATA[11];
+			String B5=DATA[14];
+			String B6=DATA[17];
+			String B7=DATA[20];
+			String B8=DATA[23];
+			String B9=DATA[26];
+			String B10=DATA[29];
+			
+			
+			String OUTSTRING=
+			"max: "+R1+" "+P1+"/"+T+" Q1 + "+R2+" "+P2+"/"+T+" Q2 + "+R3+" "+P3+"/"+T+" Q3 + "+R4+" "+P4+"/"+T+" Q4 + "+R5+" "+P5+"/"+T+" Q5 + "+R6+" "+P6+"/"+T+" Q6 + "+R7+" "+P7+"/"+T+" Q7 + "+R8+" "+P8+"/"+T+" Q8 + "+R9+" "+P9+"/"+T+" Q9 + "+R10+" "+P10+"/"+T+" Q10;"+"\n"+
+			"\n"+
+			P1+" Q1 + "+P2+" Q2 + "+P3+" Q3 + "+P4+" Q4 + "+P5+" Q5 + "+P6+" Q6 + "+P7+" Q7 + "+P8+" Q8 + "+P9+" Q9 + "+P10+" Q10 <= "+T+";"+"\n"+
+			B1+" "+P1+"/"+T+" Q1 + "+B2+" "+P2+"/"+T+" Q2 + "+B3+" "+P3+"/"+T+" Q3 + "+B4+" "+P4+"/"+T+" Q4 + "+B5+" "+P5+"/"+T+" Q5 + "+B6+" "+P6+"/"+T+" Q6 + "+B7+" "+P7+"/"+T+" Q7 + "+B8+" "+P8+"/"+T+" Q8 + "+B9+" "+P9+"/"+T+" Q9 + "+B10+" "+P10+"/"+T+" Q10 <= "+B+";"+"\n"+
+			P1+" Q1 + "+P2+" Q2 + "+P3+" Q3 + "+P4+" Q4 + "+P5+" Q5 + "+P6+" Q6 + "+P7+" Q7 <= 0.705*"+T+";"+"\n"+
+			P1+" Q1 + "+P2+" Q2 + "+P3+" Q3 + "+P4+" Q4 + "+P5+" Q5 + "+P6+" Q6 + "+P7+" Q7 >= 0.695*"+T+";"+"\n"+
+			P8+" Q8 + "+P9+" Q9 + "+P10+" Q10 <= 0.305*"+T+";"+"\n"+
+			P8+" Q8 + "+P9+" Q9 + "+P10+" Q10 >= 0.295*"+T+";"+"\n"+
+			P1+" Q1 >= 0.05*"+T+";"+"\n"+
+			P1+" Q1 <= 0.3*"+T+";"+"\n"+
+			P2+" Q2 >= 0.05*"+T+";"+"\n"+
+			P2+" Q2 <= 0.3*"+T+";"+"\n"+
+			P3+" Q3 >= 0.05*"+T+";"+"\n"+
+			P3+" Q3 <= 0.3*"+T+";"+"\n"+
+			P4+" Q4 >= 0.05*"+T+";"+"\n"+
+			P4+" Q4 <= 0.3*"+T+";"+"\n"+
+			P5+" Q5 >= 0.05*"+T+";"+"\n"+
+			P5+" Q5 <= 0.3*"+T+";"+"\n"+
+			P6+" Q6 >= 0.05*"+T+";"+"\n"+
+			P6+" Q6 <= 0.3*"+T+";"+"\n"+
+			P7+" Q7 >= 0.05*"+T+";"+"\n"+
+			P7+" Q7 <= 0.3*"+T+";"+"\n"+
+			P8+" Q8 >= 0.05*"+T+";"+"\n"+
+			P8+" Q8 <= 0.3*"+T+";"+"\n"+
+			P9+" Q9 >= 0.05*"+T+";"+"\n"+
+			P9+" Q9 <= 0.3*"+T+";"+"\n"+
+			P10+" Q10 >= 0.05*"+T+";"+"\n"+
+			P10+" Q10 <= 0.3*"+T+";"+"\n"+
+			"\n"+
+			"int Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,Q10;";
+			
 			//connecting to the AFS
 			String host="afs1.njit.edu";
 			String user="jp834";
@@ -356,7 +424,7 @@ public class StockTest {
 		//System.out.println(c.firstBuy());
 		//System.out.println(c.getQuote());
 		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
-		StockTest c2 = new StockTest("0.005045997,0.005045997,-0.000995944,0.003802902,0.000751952,0.004520559,0.000442582,0.000217747,0.002582707,0.003047644,0.006611401,0.003667151,100,100,100,100,100,900,100,100,100,");
+		StockTest c2 = new StockTest("0.005045997,85.62,1.073132221,-0.000995944,591.35,1.066861448,0.003802902,306.7,0.984216143,0.004520559,1370,1.025943826,0.000442582,370.08,0.717279322,0.000217747,78.09,0.883875360,0.002582707,129.9,1.631651926,0.003047644,47.02,1.464211366,0.006611401,727.15,0.993940550,0.003667151,186.05,0.743267272,3891.96,1.2");
 		System.out.println(c2.runR());
 
 	}
