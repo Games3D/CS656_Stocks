@@ -198,7 +198,8 @@
 			  $TotalStock=0;
 
 						  $myarray=array(0,0,0,0,0,0,0,0,0,0);
-						  $_SESSION['finalarray']=array(0,0,0,0,0,0,0,0,0,0);
+                          $_SESSION['finalarray']=array(0,0,0,0,0,0,0,0,0,0);
+                          $_SESSION['TOTALPORT']=0;
 						  $counter=0;
 
 						while ( $row = mysqli_fetch_assoc( $result ) ) {
@@ -243,7 +244,7 @@
 								
 							
 							}
-							$_SESSION['TOTALPORT']=$TOTALPORT+($rowSuma['aa']*$unitPrice);
+							$_SESSION['TOTALPORT']=$_SESSION['TOTALPORT']+($rowSuma['aa']*$unitPrice);
 								
                                                                                   
 							$TotalStock=$TotalStock+1;
@@ -312,11 +313,42 @@
 		</div>
 		<br>
    <div>
+
+<?php
+
+$result = $conn->query("SELECT * FROM `SM_StockList`
+JOIN `SM_Stocks` ON SM_Stocks.StockSymbol = SM_StockList.Symbol
+JOIN `SM_Portfolio` ON SM_Portfolio.portfolioID = SM_Stocks.PortfolioID
+WHERE SM_Portfolio.Username = '".$_SESSION["USER"]."' AND SM_Portfolio.portfolioID = '".$_SESSION['CURPORTFOLIO']."';");
+
+
+$counts=0;
+$arrayER=array(0,0,0,0,0,0,0,0,0,0);
+$arrayBETA=array(0,0,0,0,0,0,0,0,0,0);
+while($row = $result->fetch_assoc())
+{
+
+$arrayER[$counts]=$row["ER"];
+$arrayBETA[$counts]=$row["Beta"];
+
+$counts=$counts+1;
+
+}
+
+
+?>
+   <h3>Current Portfolio Expected Return = <?php echo round((($arrayER[0]*($myarray[0]/$_SESSION['TOTALPORT']))+($arrayER[1]*($myarray[1]/$_SESSION['TOTALPORT']))+($arrayER[2]*($myarray[2]/$_SESSION['TOTALPORT']))+($arrayER[3]*($myarray[3]/$_SESSION['TOTALPORT']))+($arrayER[4]*($myarray[4]/$_SESSION['TOTALPORT']))+($arrayER[5]*($myarray[5]/$_SESSION['TOTALPORT']))+($arrayER[6]*($myarray[6]/$_SESSION['TOTALPORT']))+($arrayER[7]*($myarray[7]/$_SESSION['TOTALPORT']))+($arrayER[8]*($myarray[8]/$_SESSION['TOTALPORT']))+($arrayER[9]*($myarray[9]/$_SESSION['TOTALPORT']))),4)?></h3>
+
+   <h3>Current Portfolio Beta = <?php echo round((($arrayBETA[0]*($myarray[0]/$_SESSION['TOTALPORT']))+($arrayBETA[1]*($myarray[1]/$_SESSION['TOTALPORT']))+($arrayBETA[2]*($myarray[2]/$_SESSION['TOTALPORT']))+($arrayBETA[3]*($myarray[3]/$_SESSION['TOTALPORT']))+($arrayBETA[4]*($myarray[4]/$_SESSION['TOTALPORT']))+($arrayBETA[5]*($myarray[5]/$_SESSION['TOTALPORT']))+($arrayBETA[6]*($myarray[6]/$_SESSION['TOTALPORT']))+($arrayBETA[7]*($myarray[7]/$_SESSION['TOTALPORT']))+($arrayBETA[8]*($myarray[8]/$_SESSION['TOTALPORT']))+($arrayBETA[9]*($myarray[9]/$_SESSION['TOTALPORT']))),4)?></h3>
+
+
+
+
+
    <h3>Optimizer</h3>
    <form method="post" Action="RunOPT.php">
    
   <?php
-   
    $_SESSION['finalarray'][0]=$myarray[0];
    $_SESSION['finalarray'][1]=$myarray[1];
    $_SESSION['finalarray'][2]=$myarray[2];
@@ -328,7 +360,7 @@
    $_SESSION['finalarray'][8]=$myarray[8];
    $_SESSION['finalarray'][9]=$myarray[9];
    
-   if((($_SESSION['sesbankbal']+$TOTALPORT)*.10)<($_SESSION['sesbankbal']))
+   if((($_SESSION['sesbankbal']+$_SESSION['TOTALPORT'])*.10)<($_SESSION['sesbankbal']))
    {
    $_SESSION['ALLOW']="NO";
    }
@@ -338,8 +370,9 @@
    
   if($TotalStock==10)
   {
+    $inputopt="Input Expected Portfolio Beta: <input name=\"betaopt\" type=\"text\">";
   $OPTIMIZE="<input type=\"submit\" name=\"RUN\" value=\"Run\">";
-  echo $OPTIMIZE;
+  echo $inputopt.$OPTIMIZE;
   
   }
   else{
@@ -380,9 +413,6 @@
       if(!empty($statusMsg)){
         echo '<div class="alert '.$statusMsgClass.'">'.$statusMsg.'</div>';
     } ?>
-			
-			
-			
 			
 			<div class="panel panel-default">
 				<div class="panel-heading">
