@@ -77,11 +77,11 @@
 		$_SESSION['sesbankbal'] = $row2[ 'Balance' ];
 		?>
 		<form method="post" Action="portfolioEdit.php">
-			Amount of $ to add to your balance: <input name="funds" type="number">
+			Amount of $ to add to your balance: <input name="funds" step=".01" type="number">
 			<input type="submit" name="BALANCE_ADD" value="Add Funds">
 		</form>
 		<form method="post" Action="portfolioEdit.php">
-			Amount of $ to remove from your balance: <input name="funds" type="number">
+			Amount of $ to remove from your balance: <input name="funds" step=".01" type="number">
 			<input type="submit" name="BALANCE_SUB" value="Remove Funds">
 		</form>
 	</div>

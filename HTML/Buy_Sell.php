@@ -276,8 +276,15 @@ echo print_r(array_values($DATA));
 //*************************************************************************************
 //BUY HTML
 //*************************************************************************************
-	}		elseif (isset($_GET['BUY'])){	
-		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$_GET['symbol'];
+	}		elseif (isset($_GET['BUY'])){
+		$sss=$_GET['symbol'];
+		$result2 = $conn->query("SELECT * FROM np397.SM_StockList where Symbol='".strtoupper($_GET['symbol'])."';");
+		$row22 = $result2->fetch_assoc();
+		if ($row22['Market']=="NSE"){
+			$sss=$_GET['symbol'].".ns";
+		}
+		
+		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$sss;
 		$contents = file_get_contents($url);
 	
 		//If $contents is not a boolean FALSE value.
@@ -351,6 +358,12 @@ header('Location: Error.php');
 		$row2 = $result2->fetch_assoc();
 		$STOCKNAME=$row2['StockName']." (".$row2['StockSymbol'].")";
 		
+		$sss=$_GET['symbol'];
+		$result2 = $conn->query("SELECT * FROM np397.SM_StockList where Symbol='".strtoupper($sss)."';");
+		$row22 = $result2->fetch_assoc();
+		if ($row22['Market']=="NSE"){
+			$sss=$_GET['symbol'].".ns";
+		}
 		
 		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$row2['StockSymbol'];
 		$contents = file_get_contents($url);
