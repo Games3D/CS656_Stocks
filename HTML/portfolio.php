@@ -195,12 +195,10 @@
 					if ( $_SESSION[ 'CURPORTFOLIO' ] != "" ) {
 $result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_StockList on StockSymbol = Symbol Where portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "' order by SM_StockList.Market asc;" );						$numrows = mysqli_num_rows( $result );
 			  $TotalStock=0;
-
 						  $myarray=array(0,0,0,0,0,0,0,0,0,0);
                           $_SESSION['finalarray']=array(0,0,0,0,0,0,0,0,0,0);
                           $_SESSION['TOTALPORT']=0;
 						  $counter=0;
-
 						while ( $row = mysqli_fetch_assoc( $result ) ) {
 							$sss=$row['StockSymbol'];
 							$result2 = $conn->query("SELECT * FROM np397.SM_StockList where Symbol='".strtoupper($sss)."';");
@@ -315,27 +313,19 @@ $result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_Stoc
    <div>
 
 <?php
-
 $result = $conn->query("SELECT * FROM `SM_StockList`
 JOIN `SM_Stocks` ON SM_Stocks.StockSymbol = SM_StockList.Symbol
 JOIN `SM_Portfolio` ON SM_Portfolio.portfolioID = SM_Stocks.PortfolioID
 WHERE SM_Portfolio.Username = '".$_SESSION["USER"]."' AND SM_Portfolio.portfolioID = '".$_SESSION['CURPORTFOLIO']."';");
-
-
 $counts=0;
 $arrayER=array(0,0,0,0,0,0,0,0,0,0);
 $arrayBETA=array(0,0,0,0,0,0,0,0,0,0);
 while($row = $result->fetch_assoc())
 {
-
 $arrayER[$counts]=$row["ER"];
 $arrayBETA[$counts]=$row["Beta"];
-
 $counts=$counts+1;
-
 }
-
-
 ?>
    <h3>Current Portfolio Expected Return = <?php echo round((($arrayER[0]*($myarray[0]/$_SESSION['TOTALPORT']))+($arrayER[1]*($myarray[1]/$_SESSION['TOTALPORT']))+($arrayER[2]*($myarray[2]/$_SESSION['TOTALPORT']))+($arrayER[3]*($myarray[3]/$_SESSION['TOTALPORT']))+($arrayER[4]*($myarray[4]/$_SESSION['TOTALPORT']))+($arrayER[5]*($myarray[5]/$_SESSION['TOTALPORT']))+($arrayER[6]*($myarray[6]/$_SESSION['TOTALPORT']))+($arrayER[7]*($myarray[7]/$_SESSION['TOTALPORT']))+($arrayER[8]*($myarray[8]/$_SESSION['TOTALPORT']))+($arrayER[9]*($myarray[9]/$_SESSION['TOTALPORT']))),4)?></h3>
 
@@ -427,7 +417,7 @@ $counts=$counts+1;
 					<br>
 					<br>
 					<br>
-					<a href="#" id="xx" style="text-decoration:none;color:#000;background-color:#ddd;border:1px solid #ccc;padding:8px;">Export Table data into Excel</a>
+					<button onclick="exportTableToCSV('test.csv')">Export HTML Table To CSV File</button>
 					
 					
 				</div>
@@ -439,51 +429,52 @@ $counts=$counts+1;
 	$( '#buys' ).slideToggle();
 	$( '#editPort' ).slideToggle();
 	$( '#importFrm' ).slideToggle();
-	$( document ).ready( function () {
-		function exportTableToCSV( $table, filename ) {
-			var $rows = $table.find( 'tr:has(td),tr:has(th)' ),
-				// Temporary delimiter characters unlikely to be typed by keyboard
-				// This is to avoid accidentally splitting the actual contents
-				tmpColDelim = String.fromCharCode( 11 ), // vertical tab character
-				tmpRowDelim = String.fromCharCode( 0 ), // null character
-				// actual delimiter characters for CSV format
-				colDelim = '","',
-				rowDelim = '"\r\n"',
-				// Grab text from table into CSV formatted string
-				csv = '"' + $rows.map( function ( i, row ) {
-					var $row = $( row ),
-						$cols = $row.find( 'td,th' );
-					return $cols.map( function ( j, col ) {
-						var $col = $( col ),
-							text = $col.text();
-						return text.replace( /"/g, '""' ); // escape double quotes
-					} ).get().join( tmpColDelim );
-				} ).get().join( tmpRowDelim )
-				.split( tmpRowDelim ).join( rowDelim )
-				.split( tmpColDelim ).join( colDelim ) + '"',
-				// Data URI
-				csvData = 'data:application/csv;charset=utf-8,' + encodeURIComponent( csv );
-			console.log( csv );
-			if ( window.navigator.msSaveBlob ) { // IE 10+
-				//alert('IE' + csv);
-				window.navigator.msSaveOrOpenBlob( new Blob( [ csv ], {
-					type: "text/plain;charset=utf-8;"
-				} ), "csvname.csv" )
-			} else {
-				$( this ).attr( {
-					'download': filename,
-					'href': csvData,
-					'target': '_blank'
-				} );
-			}
-		}
-		// This must be a hyperlink
-		$( "#xx" ).on( 'click', function ( event ) {
-			exportTableToCSV.apply( this, [ $( '#projectSpreadsheet' ), 'export.csv' ] );
-			// IF CSV, don't do event.preventDefault() or return false
-			// We actually need this to be a typical hyperlink
-		} );
-	} );
+	
+	function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+    // CSV file
+    csvFile = new Blob([csv], {type: "text/csv"});
+
+    // Download link
+    downloadLink = document.createElement("a");
+
+    // File name
+    downloadLink.download = filename;
+
+    // Create a link to the file
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+
+    // Hide download link
+    downloadLink.style.display = "none";
+
+    // Add the link to DOM
+    document.body.appendChild(downloadLink);
+
+    // Click download link
+    downloadLink.click();
+}
+
+	function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("table tr");
+    
+    for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+        
+        for (var j = 0; j < cols.length; j++) 
+            row.push(cols[j].innerText);
+        
+        csv.push(row.join(","));        
+    }
+
+    // Download CSV file
+    downloadCSV(csv.join("\n"), filename);
+}
+
+
+
 </script>
 
 
