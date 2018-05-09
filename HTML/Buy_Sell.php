@@ -34,21 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 			return;
 		}
 					
-		
-		
-		
-		
-		
-		
-		
-		
+
 		
 		//Check the 70/30 rule here
 		//select count(of .ns stock) from SM_Stocks join SM_StockList where PortfolioID= cur
 		//select count(of american stock) from SM_Stocks join SM_StockList where PortfolioID= cur
 		//if american is more then 7 dont allow another american
 		//if .ns is more then 7 dont allow another .ns
-		if ()
+		//if ()
 		$result2 = $conn->query("SELECT sum(SM_Transaction.ShareQuantity * SM_Transaction.UnitPrice) as aa FROM np397.SM_Stocks join np397.SM_Transaction on SM_Stocks.StockID = SM_Transaction.StockID join np397.SM_StockList on SM_Stocks.StockSymbol = SM_StockList.Symbol where SM_StockList.Market='DOW' and SM_Stocks.portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 		$row22 = $result2->fetch_assoc();
 		$DOW=$row22['aa'];
@@ -58,40 +51,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$NSE=$row22['aa'];
 		
 		echo "NSE:".$NSE."|DOW:".$DOW."|".$NSE/($NSE+$DOW);//<.30;
-		if (($NSE/($NSE+$DOW))>.35){
+		if (($NSE/($NSE+$DOW))>.35 && ($rowSuma['aa'] >= 7)){
 			$_SESSION["ERROR"] = 'Too much NSE stocks';
 			header('Location: Error.php');
 			return;
 		}
-		if (($DOW/($NSE+$DOW))>.75){
+		if (($DOW/($NSE+$DOW))>.75 && ($rowSuma['aa'] >= 7)){
 			$_SESSION["ERROR"] = 'Too much DOW stocks';
 			header('Location: Error.php');
 			return;
 		}
 			
 		
-		
-		
-		
-		
-		
-		
+	
 		//check the 90/10 rule here, in sell, and when adding or removing money
 		//sum up all current portfolio's total owned amount and compare to the portfolio balance
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+				
 		
 		
 		//Check to see if the stock is valid

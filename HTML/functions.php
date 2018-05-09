@@ -78,12 +78,12 @@ if(isset($_POST['importSubmit'])){
 		$NSE=$row22['aa'];
 		
 		echo "NSE:".$NSE."|DOW:".$DOW."|".$NSE/($NSE+$DOW);//<.30;
-		if (($NSE/($NSE+$DOW))>.35){
+		if (($NSE/($NSE+$DOW))>.35 && ($rowSuma['aa'] >= 7)){
 			$_SESSION["ERROR"] = 'Too much NSE stocks';
 			header('Location: Error.php');
 			return;
 		}
-		if (($DOW/($NSE+$DOW))>.75){
+		if (($DOW/($NSE+$DOW))>.75 && ($rowSuma['aa'] >= 7)){
 			$_SESSION["ERROR"] = 'Too much DOW stocks';
 			header('Location: Error.php');
 			return;
@@ -310,7 +310,7 @@ echo print_r(array_values($DATA));
 			return;
 		}
 
-		$conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$_GET["StockID"]."', '-".$SHARES."', '".$unitPrice."', CURRENT_TIMESTAMP);");
+		$conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$line[1]."', '-".$SHARES."', '".$unitPrice."', CURRENT_TIMESTAMP);");
 
 		//Updates balance
 		$conn->query("UPDATE np397.SM_Users set BankBalance='".($BALANCE+($SHARES*$unitPrice))."' where Username='".$_SESSION["USER"]."';");
