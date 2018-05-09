@@ -193,8 +193,7 @@
 				<tbody id="tbodyid">
 					<?php
 					if ( $_SESSION[ 'CURPORTFOLIO' ] != "" ) {
-						$result = mysqli_query( $conn, "select * from np397.SM_Stocks Where portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "';" );
-						$numrows = mysqli_num_rows( $result );
+$result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_StockList on StockSymbol = Symbol Where portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "' order by SM_StockList.Market asc;" );						$numrows = mysqli_num_rows( $result );
 			  $TotalStock=0;
 
 						  $myarray=array(0,0,0,0,0,0,0,0,0,0);
