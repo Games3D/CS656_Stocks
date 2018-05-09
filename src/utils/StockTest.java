@@ -10,6 +10,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -245,81 +247,78 @@ public class StockTest {
 				value="BAD PARAMS";
 				return;
 			}
-//r1 p1 b1 t
-			double pb=Double.parseDouble(DATA[0]);
 
-			//making the file output string
-			//String OUTSTRING=String.format("max: %s a + %s b + %s c + %s d + %s e + %s f + %s g + %s h + %s i + %s j;\r\n" + 
-			//		"\r\n" + 
-			//		"a + b + c +  d + e + f + g + h + i + j <= 100000;\r\n" + 
-			//		(Double.parseDouble(DATA[11])-pb)+" a + "+(Double.parseDouble(DATA[12])-pb)+" b + "+(Double.parseDouble(DATA[13])-pb)+" c + "+(Double.parseDouble(DATA[14])-pb)+" d + "+(Double.parseDouble(DATA[15])-pb)+" e + "+(Double.parseDouble(DATA[16])-pb)+" f + "+(Double.parseDouble(DATA[17])-pb)+" g + "+(Double.parseDouble(DATA[18])-pb)+" h + "+(Double.parseDouble(DATA[19])-pb)+" i + "+(Double.parseDouble(DATA[20])-pb)+" j <= 0;",
-			//		DATA[1], DATA[2], DATA[3], DATA[4], DATA[5], DATA[6], DATA[7], DATA[8], DATA[9], DATA[10]);
-			String T=DATA[30];
-			String B=DATA[31];
 			
-			String P1=DATA[0];
-			String P2=DATA[3];
-			String P3=DATA[6];
-			String P4=DATA[9];
-			String P5=DATA[12];
-			String P6=DATA[15];
-			String P7=DATA[18];
-			String P8=DATA[21];
-			String P9=DATA[24];
-			String P10=DATA[27];
+			DecimalFormat df=new DecimalFormat("0.000000000");
 			
-			String R1=DATA[1];
-			String R2=DATA[4];
-			String R3=DATA[7];
-			String R4=DATA[10];
-			String R5=DATA[13];
-			String R6=DATA[16];
-			String R7=DATA[19];
-			String R8=DATA[22];
-			String R9=DATA[25];
-			String R10=DATA[28];
+			double T=Double.parseDouble(DATA[30]);
+			double B=Double.parseDouble(DATA[31]);
 			
-			String B1=DATA[2];
-			String B2=DATA[5];
-			String B3=DATA[8];
-			String B4=DATA[11];
-			String B5=DATA[14];
-			String B6=DATA[17];
-			String B7=DATA[20];
-			String B8=DATA[23];
-			String B9=DATA[26];
-			String B10=DATA[29];
+			double P1=Double.parseDouble(DATA[0]);
+			double P2=Double.parseDouble(DATA[3]);
+			double P3=Double.parseDouble(DATA[6]);
+			double P4=Double.parseDouble(DATA[9]);
+			double P5=Double.parseDouble(DATA[12]);
+			double P6=Double.parseDouble(DATA[15]);
+			double P7=Double.parseDouble(DATA[18]);
+			double P8=Double.parseDouble(DATA[21]);
+			double P9=Double.parseDouble(DATA[24]);
+			double P10=Double.parseDouble(DATA[27]);
+			
+			//System.out.println("|||||"+Double.parseDouble(DATA[3])+"|"+formatter.format(Double.parseDouble(DATA[3])));
+			
+			double R1=Double.parseDouble(DATA[1]);
+			double R2=Double.parseDouble(DATA[4]);
+			double R3=Double.parseDouble(DATA[7]);
+			double R4=Double.parseDouble(DATA[10]);
+			double R5=Double.parseDouble(DATA[13]);
+			double R6=Double.parseDouble(DATA[16]);
+			double R7=Double.parseDouble(DATA[19]);
+			double R8=Double.parseDouble(DATA[22]);
+			double R9=Double.parseDouble(DATA[25]);
+			double R10=Double.parseDouble(DATA[28]);
+			
+			double B1=Double.parseDouble(DATA[2]);
+			double B2=Double.parseDouble(DATA[5]);
+			double B3=Double.parseDouble(DATA[8]);
+			double B4=Double.parseDouble(DATA[11]);
+			double B5=Double.parseDouble(DATA[14]);
+			double B6=Double.parseDouble(DATA[17]);
+			double B7=Double.parseDouble(DATA[20]);
+			double B8=Double.parseDouble(DATA[23]);
+			double B9=Double.parseDouble(DATA[26]);
+			double B10=Double.parseDouble(DATA[29]);
 			
 			
 			String OUTSTRING=
-			"max: "+R1+" "+P1+"/"+T+" Q1 + "+R2+" "+P2+"/"+T+" Q2 + "+R3+" "+P3+"/"+T+" Q3 + "+R4+" "+P4+"/"+T+" Q4 + "+R5+" "+P5+"/"+T+" Q5 + "+R6+" "+P6+"/"+T+" Q6 + "+R7+" "+P7+"/"+T+" Q7 + "+R8+" "+P8+"/"+T+" Q8 + "+R9+" "+P9+"/"+T+" Q9 + "+R10+" "+P10+"/"+T+" Q10;"+"\n"+
+			"max: "+df.format((R1*P1)/T)+" Q1 + "+df.format((R2*P2)/T)+" Q2 + "+df.format((R3*P3)/T)+" Q3 + "+df.format((R4*P4)/T)+" Q4 + "+df.format((R5*P5)/T)+" Q5 + "+df.format((R1*P6)/T)+" Q6 + "+df.format((R7*P7)/T)+" Q7 + "+df.format((R8*P8)/T)+" Q8 + "+df.format((R9*P9)/T)+" Q9 + "+df.format((R10*P10)/T)+" Q10;"+"\n"+
 			"\n"+
-			P1+" Q1 + "+P2+" Q2 + "+P3+" Q3 + "+P4+" Q4 + "+P5+" Q5 + "+P6+" Q6 + "+P7+" Q7 + "+P8+" Q8 + "+P9+" Q9 + "+P10+" Q10 <= "+T+";"+"\n"+
-			B1+" "+P1+"/"+T+" Q1 + "+B2+" "+P2+"/"+T+" Q2 + "+B3+" "+P3+"/"+T+" Q3 + "+B4+" "+P4+"/"+T+" Q4 + "+B5+" "+P5+"/"+T+" Q5 + "+B6+" "+P6+"/"+T+" Q6 + "+B7+" "+P7+"/"+T+" Q7 + "+B8+" "+P8+"/"+T+" Q8 + "+B9+" "+P9+"/"+T+" Q9 + "+B10+" "+P10+"/"+T+" Q10 <= "+B+";"+"\n"+
-			P1+" Q1 + "+P2+" Q2 + "+P3+" Q3 + "+P4+" Q4 + "+P5+" Q5 + "+P6+" Q6 + "+P7+" Q7 <= 0.705*"+T+";"+"\n"+
-			P1+" Q1 + "+P2+" Q2 + "+P3+" Q3 + "+P4+" Q4 + "+P5+" Q5 + "+P6+" Q6 + "+P7+" Q7 >= 0.695*"+T+";"+"\n"+
-			P8+" Q8 + "+P9+" Q9 + "+P10+" Q10 <= 0.305*"+T+";"+"\n"+
-			P8+" Q8 + "+P9+" Q9 + "+P10+" Q10 >= 0.295*"+T+";"+"\n"+
-			P1+" Q1 >= 0.05*"+T+";"+"\n"+
-			P1+" Q1 <= 0.3*"+T+";"+"\n"+
-			P2+" Q2 >= 0.05*"+T+";"+"\n"+
-			P2+" Q2 <= 0.3*"+T+";"+"\n"+
-			P3+" Q3 >= 0.05*"+T+";"+"\n"+
-			P3+" Q3 <= 0.3*"+T+";"+"\n"+
-			P4+" Q4 >= 0.05*"+T+";"+"\n"+
-			P4+" Q4 <= 0.3*"+T+";"+"\n"+
-			P5+" Q5 >= 0.05*"+T+";"+"\n"+
-			P5+" Q5 <= 0.3*"+T+";"+"\n"+
-			P6+" Q6 >= 0.05*"+T+";"+"\n"+
-			P6+" Q6 <= 0.3*"+T+";"+"\n"+
-			P7+" Q7 >= 0.05*"+T+";"+"\n"+
-			P7+" Q7 <= 0.3*"+T+";"+"\n"+
-			P8+" Q8 >= 0.05*"+T+";"+"\n"+
-			P8+" Q8 <= 0.3*"+T+";"+"\n"+
-			P9+" Q9 >= 0.05*"+T+";"+"\n"+
-			P9+" Q9 <= 0.3*"+T+";"+"\n"+
-			P10+" Q10 >= 0.05*"+T+";"+"\n"+
-			P10+" Q10 <= 0.3*"+T+";"+"\n"+
+			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 + "+df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 <= "+df.format(T)+";"+"\n"+
+			df.format((B1+P1)/T)+" Q1 + "+df.format((B2+P2)/T)+" Q2 + "+df.format((B3+P3)/T)+" Q3 + "+df.format((B4+P4)/T)+" Q4 + "+df.format((B5+P5)/T)+" Q5 + "+df.format((B6+P6)/T)+" Q6 + "+df.format((B7+P7)/T)+" Q7 + "+df.format((B8+P8)/T)+" Q8 + "+df.format((B9+P9)/T)+" Q9 + "+df.format((B10+P10)/T)+" Q10 <= "+df.format(B)+";"+"\n"+
+			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 <= "+df.format(0.705*T)+";"+"\n"+
+			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 >= "+df.format(0.695*T)+";"+"\n"+
+			df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 <= "+df.format(0.305*T)+";"+"\n"+
+			df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 >= "+df.format(0.295*T)+";"+"\n"+
+			df.format(P1)+" Q1 >= "+0.05*T+";"+"\n"+
+			df.format(P1)+" Q1 <= "+0.3*T+";"+"\n"+
+			df.format(P2)+" Q2 >= "+0.05*T+";"+"\n"+
+			df.format(P2)+" Q2 <= "+0.3*T+";"+"\n"+
+			df.format(P3)+" Q3 >= "+0.05*T+";"+"\n"+
+			df.format(P3)+" Q3 <= "+0.3*T+";"+"\n"+
+			df.format(P4)+" Q4 >= "+0.05*T+";"+"\n"+
+			df.format(P4)+" Q4 <= "+0.3*T+";"+"\n"+
+			df.format(P5)+" Q5 >= "+0.05*T+";"+"\n"+
+			df.format(P5)+" Q5 <= "+0.3*T+";"+"\n"+
+			df.format(P6)+" Q6 >= "+0.05*T+";"+"\n"+
+			df.format(P6)+" Q6 <= "+0.3*T+";"+"\n"+
+			df.format(P7)+" Q7 >= "+0.05*T+";"+"\n"+
+			df.format(P7)+" Q7 <= "+0.3*T+";"+"\n"+
+			df.format(P8)+" Q8 >= "+0.05*T+";"+"\n"+
+			df.format(P8)+" Q8 <= "+0.3*T+";"+"\n"+
+			df.format(P9)+" Q9 >= "+0.05*T+";"+"\n"+
+			df.format(P9)+" Q9 <= "+0.3*T+";"+"\n"+
+			df.format(P10)+" Q10 >= "+0.05*T+";"+"\n"+
+			df.format(P10)+" Q10 <= "+0.3*T+";"+"\n"+
 			"\n"+
 			"int Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,Q10;";
 			
