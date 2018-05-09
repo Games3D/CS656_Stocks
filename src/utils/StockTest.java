@@ -293,11 +293,11 @@ public class StockTest {
 			"\n"+
 			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 + "+df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 <= "+df.format(T)+";"+"\n"+
 			df.format((B1*P1)/T)+" Q1 + "+df.format((B2*P2)/T)+" Q2 + "+df.format((B3*P3)/T)+" Q3 + "+df.format((B4*P4)/T)+" Q4 + "+df.format((B5*P5)/T)+" Q5 + "+df.format((B6*P6)/T)+" Q6 + "+df.format((B7*P7)/T)+" Q7 + "+df.format((B8*P8)/T)+" Q8 + "+df.format((B9*P9)/T)+" Q9 + "+df.format((B10*P10)/T)+" Q10 <= "+df.format(B)+";"+"\n"+
-			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 <= "+df.format(0.705*T)+";"+"\n"+
-			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 >= "+df.format(0.695*T)+";"+"\n"+
-			df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 <= "+df.format(0.305*T)+";"+"\n"+
-			df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 >= "+df.format(0.295*T)+";"+"\n"+
-			df.format(P1)+" Q1 >= "+0.05*T+";"+"\n"+
+			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 <= "+df.format(0.75*T)+";"+"\n"+
+			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 >= "+df.format(0.65*T)+";"+"\n"+
+			df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 <= "+df.format(0.35*T)+";"+"\n"+
+			df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 >= "+df.format(0.25*T)+";"+"\n"+
+			/*df.format(P1)+" Q1 >= "+0.05*T+";"+"\n"+
 			df.format(P1)+" Q1 <= "+0.3*T+";"+"\n"+
 			df.format(P2)+" Q2 >= "+0.05*T+";"+"\n"+
 			df.format(P2)+" Q2 <= "+0.3*T+";"+"\n"+
@@ -316,7 +316,17 @@ public class StockTest {
 			df.format(P9)+" Q9 >= "+0.05*T+";"+"\n"+
 			df.format(P9)+" Q9 <= "+0.3*T+";"+"\n"+
 			df.format(P10)+" Q10 >= "+0.05*T+";"+"\n"+
-			df.format(P10)+" Q10 <= "+0.3*T+";"+"\n"+
+			df.format(P10)+" Q10 <= "+0.3*T+";"+"\n"+*/
+			"Q1>=1;"+"\n"+
+			"Q2>=1;"+"\n"+
+			"Q3>=1;"+"\n"+
+			"Q4>=1;"+"\n"+
+			"Q5>=1;"+"\n"+
+			"Q6>=1;"+"\n"+
+			"Q7>=1;"+"\n"+
+			"Q8>=1;"+"\n"+
+			"Q9>=1;"+"\n"+
+			"Q10>=1;"+"\n"+
 			"\n"+
 			"int Q1,Q2,Q3,Q4,Q5,Q6,Q7,Q8,Q9,Q10;";
 			
@@ -324,7 +334,7 @@ public class StockTest {
 			String host="afs1.njit.edu";
 			String user="jp834";
 			String password="Mynjit19";
-			String command1="module load R-Project/3.2.4; R < /afs/cad.njit.edu/u/j/p/jp834/public_html/run.r --no-save";
+			String command1="unset LD_LIBRARY_PATH; module load R-Project/3.2.4; R < /afs/cad.njit.edu/u/j/p/jp834/public_html/run.r --no-save";
 			try{
 
 				java.util.Properties config = new java.util.Properties(); 
@@ -387,7 +397,8 @@ public class StockTest {
 				e.printStackTrace();
 			}
 
-			value=rt.substring(rt.indexOf("get.variables(model1)")+23,rt.length()-4);
+			rt=rt.substring(rt.indexOf("get.variables(model1)")+23,rt.length()-4);
+			value=rt.substring(rt.indexOf("]")+2);
 			//System.out.println(value);
 		}
 		public String getValue() {
@@ -421,7 +432,7 @@ public class StockTest {
 		//System.out.println(c.firstBuy());
 		//System.out.println(c.getQuote());
 		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
-		StockTest c2 = new StockTest("0.005045997,85.62,1.073132221,-0.000995944,591.35,1.066861448,0.003802902,306.7,0.984216143,0.004520559,1370,1.025943826,0.000442582,370.08,0.717279322,0.000217747,78.09,0.883875360,0.002582707,129.9,1.631651926,0.003047644,47.02,1.464211366,0.006611401,727.15,0.993940550,0.003667151,186.05,0.743267272,3891.96,1.2");
+		StockTest c2 = new StockTest("0.005045997,204.16 ,1.073132221,-0.000995944,186.13 ,1.066861448,0.003802902,46.2729 ,0.984216143,0.000751952,204.16 ,0.690125203,0.003323035,8.793088 ,1.098406147,0.004520559,10.872237 ,1.025943826,0.000442582,14.655 ,0.717279322,0.000217747,46.2729 ,0.883875360,0.006611401,8.793088 ,0.993940550,0.003667151,10.872237 ,0.743267272,4337.8558,1.2");
 		System.out.println(c2.runR());
 
 	}

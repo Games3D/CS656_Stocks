@@ -218,6 +218,7 @@ $result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_Stoc
 							}
 							$DATA = explode("`", $contents);
 							
+							$unitPriceS=$DATA[7];
 							$unitPrice=$DATA[6];
 							$MarketCap=$DATA[1];
 							$OpenPrice=$DATA[3];
@@ -252,7 +253,7 @@ $result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_Stoc
 							$expectedreturn=($rateofreturn*.10);
 							
 							
-							$myarray[$counter]=($unitPrice*$rowSuma['aa']);
+							$myarray[$counter]=($unitPriceS);//*$rowSuma['aa']);
 							$counter=$counter+1;
 							//echo("Expected reutun".$expectedreturn);
 							
