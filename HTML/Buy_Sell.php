@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 //*************************************************************************************
 //BUY
 //*************************************************************************************
-	if (isset($_GET['BUY']) || isset($_GET['AUTO_BUY'])){
+	if (isset($_GET['BUYF']) || isset($_GET['AUTO_BUY']) || isset($_GET['buyF'])){
 		//echo "BUYYYYYYYYYYY";
 		//do a select on stocks to make sure the is added already, if yes then move on, if no then add
 		//insert into transactions
@@ -273,7 +273,55 @@ echo print_r(array_values($DATA));
 		}
 		
 		header("Location: portfolio.php");
-	}		elseif (isset($_GET['SELL'])){
+//*************************************************************************************
+//BUY HTML
+//*************************************************************************************
+	}		elseif (isset($_GET['BUY'])){	
+		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$_GET['symbol'];
+		$contents = file_get_contents($url);
+	
+		//If $contents is not a boolean FALSE value.
+		if($contents == false){
+			$_SESSION["ERROR"] = 'Get request error';
+			header('Location: Error.php');
+			return;
+		}
+		$DATA = explode("`", $contents);
+		$unitPrice=$DATA[7];
+		?>
+<html>
+
+<head>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+	<meta charset="utf-8">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="CSS/home.css">
+
+	<title>Portfolio Page</title>
+</head>
+
+<body>
+	you are about to buy
+	<?PHP if ($SHARES!=-1)echo $SHARES; else echo "ALL";?> shares of
+	<?PHP echo $_GET['symbol']?> stock for <?php echo $unitPrice ?>, is this correct?
+	<button onClick='location.href="portfolio.php"'>Back</button>
+	<form action="Buy_Sell.php">
+		<input name="symbol" type="hidden" value="<?php echo $_GET['symbol']?>">
+		<input name="amount" type="hidden" value="<?php echo $_GET['amount']?>">
+		<input type="submit" name="buyF" value="Buy Stock" onclick="buyF()"/>
+	</form>
+</body>
+
+</html>
+<?php
+//*************************************************************************************
+//SELL HTML
+//*************************************************************************************
+}		elseif (isset($_GET['SELL'])){
  $resultSuma = mysqli_query( $conn, "select count(StockID) as aa from np397.SM_Stocks Where PortfolioID='" . $_SESSION['CURPORTFOLIO'] . "';" );
 		$rowSuma = mysqli_fetch_assoc( $resultSuma );
 //echo "asdfd".$rowSuma['aa']."|";
@@ -302,6 +350,19 @@ header('Location: Error.php');
 		}
 		$row2 = $result2->fetch_assoc();
 		$STOCKNAME=$row2['StockName']." (".$row2['StockSymbol'].")";
+		
+		
+		$url = 'https://web.njit.edu/~jp834/webapps8/NewFile.jsp?OPCODE=GETQUOTE&PARAMS='.$row2['StockSymbol'];
+		$contents = file_get_contents($url);
+	
+		//If $contents is not a boolean FALSE value.
+		if($contents == false){
+			$_SESSION["ERROR"] = 'Get request error';
+			header('Location: Error.php');
+			return;
+		}
+		$DATA = explode("`", $contents);
+		$unitPrice=$DATA[7];
 		?>
 <html>
 
@@ -321,7 +382,7 @@ header('Location: Error.php');
 <body>
 	you are about to sell
 	<?PHP if ($SHARES!=-1)echo $SHARES; else echo "ALL";?> shares of
-	<?PHP echo $STOCKNAME?> stock, is this correct?
+	<?PHP echo $STOCKNAME?> stock for <?php echo $unitPrice ?>, is this correct?
 	<button onClick='location.href="portfolio.php"'>Back</button>
 	<form action="Buy_Sell.php">
 		<input name="StockID" type="hidden" value="<?php echo $_GET['StockID']?>">

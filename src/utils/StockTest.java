@@ -253,30 +253,28 @@ public class StockTest {
 			
 			double T=Double.parseDouble(DATA[30]);
 			double B=Double.parseDouble(DATA[31]);
-			
-			double P1=Double.parseDouble(DATA[0]);
-			double P2=Double.parseDouble(DATA[3]);
-			double P3=Double.parseDouble(DATA[6]);
-			double P4=Double.parseDouble(DATA[9]);
-			double P5=Double.parseDouble(DATA[12]);
-			double P6=Double.parseDouble(DATA[15]);
-			double P7=Double.parseDouble(DATA[18]);
-			double P8=Double.parseDouble(DATA[21]);
-			double P9=Double.parseDouble(DATA[24]);
-			double P10=Double.parseDouble(DATA[27]);
-			
-			//System.out.println("|||||"+Double.parseDouble(DATA[3])+"|"+formatter.format(Double.parseDouble(DATA[3])));
-			
-			double R1=Double.parseDouble(DATA[1]);
-			double R2=Double.parseDouble(DATA[4]);
-			double R3=Double.parseDouble(DATA[7]);
-			double R4=Double.parseDouble(DATA[10]);
-			double R5=Double.parseDouble(DATA[13]);
-			double R6=Double.parseDouble(DATA[16]);
-			double R7=Double.parseDouble(DATA[19]);
-			double R8=Double.parseDouble(DATA[22]);
-			double R9=Double.parseDouble(DATA[25]);
-			double R10=Double.parseDouble(DATA[28]);
+			//r,p,b
+			double R1=Double.parseDouble(DATA[0]);
+			double R2=Double.parseDouble(DATA[3]);
+			double R3=Double.parseDouble(DATA[6]);
+			double R4=Double.parseDouble(DATA[9]);
+			double R5=Double.parseDouble(DATA[12]);
+			double R6=Double.parseDouble(DATA[15]);
+			double R7=Double.parseDouble(DATA[18]);
+			double R8=Double.parseDouble(DATA[21]);
+			double R9=Double.parseDouble(DATA[24]);
+			double R10=Double.parseDouble(DATA[27]);
+						
+			double P1=Double.parseDouble(DATA[1]);
+			double P2=Double.parseDouble(DATA[4]);
+			double P3=Double.parseDouble(DATA[7]);
+			double P4=Double.parseDouble(DATA[10]);
+			double P5=Double.parseDouble(DATA[13]);
+			double P6=Double.parseDouble(DATA[16]);
+			double P7=Double.parseDouble(DATA[19]);
+			double P8=Double.parseDouble(DATA[22]);
+			double P9=Double.parseDouble(DATA[25]);
+			double P10=Double.parseDouble(DATA[28]);
 			
 			double B1=Double.parseDouble(DATA[2]);
 			double B2=Double.parseDouble(DATA[5]);
@@ -294,7 +292,7 @@ public class StockTest {
 			"max: "+df.format((R1*P1)/T)+" Q1 + "+df.format((R2*P2)/T)+" Q2 + "+df.format((R3*P3)/T)+" Q3 + "+df.format((R4*P4)/T)+" Q4 + "+df.format((R5*P5)/T)+" Q5 + "+df.format((R1*P6)/T)+" Q6 + "+df.format((R7*P7)/T)+" Q7 + "+df.format((R8*P8)/T)+" Q8 + "+df.format((R9*P9)/T)+" Q9 + "+df.format((R10*P10)/T)+" Q10;"+"\n"+
 			"\n"+
 			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 + "+df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 <= "+df.format(T)+";"+"\n"+
-			df.format((B1+P1)/T)+" Q1 + "+df.format((B2+P2)/T)+" Q2 + "+df.format((B3+P3)/T)+" Q3 + "+df.format((B4+P4)/T)+" Q4 + "+df.format((B5+P5)/T)+" Q5 + "+df.format((B6+P6)/T)+" Q6 + "+df.format((B7+P7)/T)+" Q7 + "+df.format((B8+P8)/T)+" Q8 + "+df.format((B9+P9)/T)+" Q9 + "+df.format((B10+P10)/T)+" Q10 <= "+df.format(B)+";"+"\n"+
+			df.format((B1*P1)/T)+" Q1 + "+df.format((B2*P2)/T)+" Q2 + "+df.format((B3*P3)/T)+" Q3 + "+df.format((B4*P4)/T)+" Q4 + "+df.format((B5*P5)/T)+" Q5 + "+df.format((B6*P6)/T)+" Q6 + "+df.format((B7*P7)/T)+" Q7 + "+df.format((B8*P8)/T)+" Q8 + "+df.format((B9*P9)/T)+" Q9 + "+df.format((B10*P10)/T)+" Q10 <= "+df.format(B)+";"+"\n"+
 			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 <= "+df.format(0.705*T)+";"+"\n"+
 			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 >= "+df.format(0.695*T)+";"+"\n"+
 			df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 <= "+df.format(0.305*T)+";"+"\n"+
@@ -402,7 +400,7 @@ public class StockTest {
 		new Thread(foo).start();
 		
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(15000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

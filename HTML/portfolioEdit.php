@@ -18,6 +18,22 @@
 				return;
 			}
 			
+			
+			$result2 = $conn->query("SELECT count(*) as aa FROM np397.SM_Portfolio where name='".$_POST["name"]."' and Username='".$_SESSION["USER"]."';");
+			if (!$result2) {
+				die('Invalid query: ' . mysql_error());
+				$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+				header('Location: Error.php');
+				return;
+			}
+			$row2 = $result2->fetch_assoc();
+			if ($row2['aa']>0){
+				$_SESSION["ERROR"] = 'there is a portfolio out the called this all ready';
+				header('Location: Error.php');
+				return;
+			}
+			
+			
 			$conn->query("UPDATE np397.SM_Portfolio set name='".$_POST["name"]."' Where portfolioID= '".$_SESSION['CURPORTFOLIO']."';");
 		} elseif (isset($_POST['ADD'])){
 			//echo "ADD";
@@ -27,6 +43,21 @@
 				header('Location: Error.php');
 				return;
 			}
+			
+			$result2 = $conn->query("SELECT count(*) as aa FROM np397.SM_Portfolio where name='".$_POST["name"]."' and Username='".$_SESSION["USER"]."';");
+			if (!$result2) {
+				die('Invalid query: ' . mysql_error());
+				$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+				header('Location: Error.php');
+				return;
+			}
+			$row2 = $result2->fetch_assoc();
+			if ($row2['aa']>0){
+				$_SESSION["ERROR"] = 'there is a portfolio out the called this all ready';
+				header('Location: Error.php');
+				return;
+			}
+			
 			
 			$conn->query("INSERT into np397.SM_Portfolio (Username, name) values('".$_SESSION["USER"]."', '".$_POST["name"]."');");
 		} elseif (isset($_POST['DELETE'])){
