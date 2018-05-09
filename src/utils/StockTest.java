@@ -212,8 +212,8 @@ public class StockTest {
 								DATA.get("longName")+ "`" +
 								DATA.get("regularMarketOpen")+ "`" +
 								DATA.get("currency")+ "`" +
-								DATA.get("regularMarketPreviousClose")+ "`" +
-								DATA.get("regularMarketPrice")+ "`" +
+								CurrencyConverter.conversionRate((String)DATA.get("regularMarketPreviousClose"), "USD")+ "`" +
+								CurrencyConverter.conversionRate((String)DATA.get("regularMarketPrice"), "USD")+ "`" +
 								cc);
 
 				//System.out.println(DATA.get("market"));
@@ -411,16 +411,17 @@ public class StockTest {
 		new Thread(foo).start();
 		
 		try {
-			Thread.sleep(15000);
+			Thread.sleep(25000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		
 		String value = foo.getValue();
+		System.out.println(value);
 		
 		if (value.equals("BAD PARAMS")) {
 			return "BAD PARAMS";
-		} else if (value.equals("")) {
+		} else if (value.isEmpty()) {
 			return "TIME OUT";
 		} else {
 			return value;
@@ -432,7 +433,7 @@ public class StockTest {
 		//System.out.println(c.firstBuy());
 		//System.out.println(c.getQuote());
 		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
-		StockTest c2 = new StockTest("0.005045997,204.16 ,1.073132221,-0.000995944,186.13 ,1.066861448,0.003802902,46.2729 ,0.984216143,0.000751952,204.16 ,0.690125203,0.003323035,8.793088 ,1.098406147,0.004520559,10.872237 ,1.025943826,0.000442582,14.655 ,0.717279322,0.000217747,46.2729 ,0.883875360,0.006611401,8.793088 ,0.993940550,0.003667151,10.872237 ,0.743267272,4337.8558,1.2");
+		StockTest c2 = new StockTest("0.005045997,51.875423 ,1.073132221,-0.000995944,187.36 ,1.066861448,0.003802902,100.5 ,0.984216143,0.000751952,344.5 ,0.690125203,0.003323035,152.61 ,1.098406147,0.004520559,14.62 ,1.025943826,0.000442582,142.61 ,0.717279322,0.000217747,203.42 ,0.883875360,0.006611401,51.875423 ,0.993940550,0.003667151,8.793088 ,0.743267272,2639.963934,1.2");
 		System.out.println(c2.runR());
 
 	}

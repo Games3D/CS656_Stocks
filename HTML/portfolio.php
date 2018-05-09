@@ -193,9 +193,10 @@
 				<tbody id="tbodyid">
 					<?php
 					if ( $_SESSION[ 'CURPORTFOLIO' ] != "" ) {
-$result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_StockList on StockSymbol = Symbol Where portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "' order by SM_StockList.Market asc;" );						$numrows = mysqli_num_rows( $result );
+$result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_StockList on StockSymbol = Symbol Where portfolioID='" . $_SESSION[ 'CURPORTFOLIO' ] . "' order by SM_StockList.Market, Symbol asc;" );						$numrows = mysqli_num_rows( $result );
 			  $TotalStock=0;
 						  $myarray=array(0,0,0,0,0,0,0,0,0,0);
+						  $betaaa=array(0,0,0,0,0,0,0,0,0,0);
                           $_SESSION['finalarray']=array(0,0,0,0,0,0,0,0,0,0);
                           $_SESSION['TOTALPORT']=0;
 						  $counter=0;
@@ -217,7 +218,7 @@ $result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_Stoc
 							$DATA = explode("`", $contents);
 							
 							$unitPriceS=$DATA[7];
-							$unitPrice=$DATA[6];
+							$unitPrice=$DATA[7];
 							$MarketCap=$DATA[1];
 							$OpenPrice=$DATA[3];
 							$ClosePrice=$DATA[5];
@@ -250,8 +251,8 @@ $result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_Stoc
 							$rateofreturn=((($unitPrice*$rowSuma['aa'])-$TOTALBOUGHT)/$TOTALBOUGHT)*100;
 							$expectedreturn=($rateofreturn*.10);
 							
-							
-							$myarray[$counter]=($unitPriceS);//*$rowSuma['aa']);
+							$betaaa[$counter]=$unitPriceS;
+							$myarray[$counter]=$unitPriceS*$rowSuma['aa'];
 							$counter=$counter+1;
 							//echo("Expected reutun".$expectedreturn);
 							
@@ -268,23 +269,23 @@ $result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_Stoc
 							<?php echo $row['StockSymbol']?>
 						</td>
 						<td>
-							<?php echo $rowSuma['aa']?>
+							<?php echo round($rowSuma['aa'],2)?>
 						</td>
 						<td>
-							<?php echo $unitPrice*$rowSuma['aa']?>
+							<?php echo round($unitPrice*$rowSuma['aa'],2)?>
 						</td>
 						<td>
-							<?php echo $TOTALBOUGHT;?>
+							<?php echo round($TOTALBOUGHT,2)?>
 						</td>
 						<td>
-							<?php echo $unitPrice?></td>
+							<?php echo round($unitPrice,2)?></td>
 						<td>
 							<?php echo $MarketCap?>
 						</td>
 						<td>
-							<?php echo $OpenPrice?></td>
+							<?php echo round($OpenPrice,2)?></td>
 						<td>
-							<?php echo $ClosePrice?></td>
+							<?php echo round($ClosePrice,2)?></td>
 						<td>
 							<?php echo round($rateofreturn,2)."%"?></td>
 						<td>
@@ -316,7 +317,7 @@ $result = mysqli_query( $conn, "select * from np397.SM_Stocks join np397.SM_Stoc
 $result = $conn->query("SELECT * FROM `SM_StockList`
 JOIN `SM_Stocks` ON SM_Stocks.StockSymbol = SM_StockList.Symbol
 JOIN `SM_Portfolio` ON SM_Portfolio.portfolioID = SM_Stocks.PortfolioID
-WHERE SM_Portfolio.Username = '".$_SESSION["USER"]."' AND SM_Portfolio.portfolioID = '".$_SESSION['CURPORTFOLIO']."';");
+WHERE SM_Portfolio.Username = '".$_SESSION["USER"]."' AND SM_Portfolio.portfolioID = '".$_SESSION['CURPORTFOLIO']."' ORDER BY Market,Symbol ASC;");
 $counts=0;
 $arrayER=array(0,0,0,0,0,0,0,0,0,0);
 $arrayBETA=array(0,0,0,0,0,0,0,0,0,0);
@@ -339,16 +340,16 @@ $counts=$counts+1;
    <form method="post" Action="RunOPT.php">
    
   <?php
-   $_SESSION['finalarray'][0]=$myarray[0];
-   $_SESSION['finalarray'][1]=$myarray[1];
-   $_SESSION['finalarray'][2]=$myarray[2];
-   $_SESSION['finalarray'][3]=$myarray[3];
-   $_SESSION['finalarray'][4]=$myarray[4];
-   $_SESSION['finalarray'][5]=$myarray[5];
-   $_SESSION['finalarray'][6]=$myarray[6];
-   $_SESSION['finalarray'][7]=$myarray[7];
-   $_SESSION['finalarray'][8]=$myarray[8];
-   $_SESSION['finalarray'][9]=$myarray[9];
+   $_SESSION['finalarray'][0]=$betaaa[0];
+   $_SESSION['finalarray'][1]=$betaaa[1];
+   $_SESSION['finalarray'][2]=$betaaa[2];
+   $_SESSION['finalarray'][3]=$betaaa[3];
+   $_SESSION['finalarray'][4]=$betaaa[4];
+   $_SESSION['finalarray'][5]=$betaaa[5];
+   $_SESSION['finalarray'][6]=$betaaa[6];
+   $_SESSION['finalarray'][7]=$betaaa[7];
+   $_SESSION['finalarray'][8]=$betaaa[8];
+   $_SESSION['finalarray'][9]=$betaaa[9];
    
    if((($_SESSION['sesbankbal']+$_SESSION['TOTALPORT'])*.10)<($_SESSION['sesbankbal']))
    {
