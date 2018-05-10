@@ -11,7 +11,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -212,8 +211,8 @@ public class StockTest {
 								DATA.get("longName")+ "`" +
 								DATA.get("regularMarketOpen")+ "`" +
 								DATA.get("currency")+ "`" +
-								CurrencyConverter.conversionRate((String)DATA.get("regularMarketPreviousClose"), "USD")+ "`" +
-								CurrencyConverter.conversionRate((String)DATA.get("regularMarketPrice"), "USD")+ "`" +
+								(CurrencyConverter.conversionRate((String)DATA.get("currency"), "USD")*Double.parseDouble(DATA.get("regularMarketPreviousClose").toString()))+ "`" +
+								(CurrencyConverter.conversionRate((String)DATA.get("currency"), "USD")*Double.parseDouble(DATA.get("regularMarketPrice").toString()))+ "`" +
 								cc);
 
 				//System.out.println(DATA.get("market"));
@@ -289,7 +288,7 @@ public class StockTest {
 			
 			
 			String OUTSTRING=
-			"max: "+df.format((R1*P1)/T)+" Q1 + "+df.format((R2*P2)/T)+" Q2 + "+df.format((R3*P3)/T)+" Q3 + "+df.format((R4*P4)/T)+" Q4 + "+df.format((R5*P5)/T)+" Q5 + "+df.format((R1*P6)/T)+" Q6 + "+df.format((R7*P7)/T)+" Q7 + "+df.format((R8*P8)/T)+" Q8 + "+df.format((R9*P9)/T)+" Q9 + "+df.format((R10*P10)/T)+" Q10;"+"\n"+
+			"max: "+df.format((R1*P1)/T)+" Q1 + "+df.format((R2*P2)/T)+" Q2 + "+df.format((R3*P3)/T)+" Q3 + "+df.format((R4*P4)/T)+" Q4 + "+df.format((R5*P5)/T)+" Q5 + "+df.format((R6*P6)/T)+" Q6 + "+df.format((R7*P7)/T)+" Q7 + "+df.format((R8*P8)/T)+" Q8 + "+df.format((R9*P9)/T)+" Q9 + "+df.format((R10*P10)/T)+" Q10;"+"\n"+
 			"\n"+
 			df.format(P1)+" Q1 + "+df.format(P2)+" Q2 + "+df.format(P3)+" Q3 + "+df.format(P4)+" Q4 + "+df.format(P5)+" Q5 + "+df.format(P6)+" Q6 + "+df.format(P7)+" Q7 + "+df.format(P8)+" Q8 + "+df.format(P9)+" Q9 + "+df.format(P10)+" Q10 <= "+df.format(T)+";"+"\n"+
 			df.format((B1*P1)/T)+" Q1 + "+df.format((B2*P2)/T)+" Q2 + "+df.format((B3*P3)/T)+" Q3 + "+df.format((B4*P4)/T)+" Q4 + "+df.format((B5*P5)/T)+" Q5 + "+df.format((B6*P6)/T)+" Q6 + "+df.format((B7*P7)/T)+" Q7 + "+df.format((B8*P8)/T)+" Q8 + "+df.format((B9*P9)/T)+" Q9 + "+df.format((B10*P10)/T)+" Q10 <= "+df.format(B)+";"+"\n"+
@@ -411,7 +410,7 @@ public class StockTest {
 		new Thread(foo).start();
 		
 		try {
-			Thread.sleep(25000);
+			Thread.sleep(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -429,10 +428,10 @@ public class StockTest {
 	}
 
 	public static void main (String[] args) {
-		//StockTest c = new StockTest("zeel.ns");
-		//System.out.println(c.firstBuy());
-		//System.out.println(c.getQuote());
-		//System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
+		StockTest c = new StockTest("zeel.ns");
+		System.out.println(c.firstBuy());
+		System.out.println(c.getQuote());
+		System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
 		StockTest c2 = new StockTest("0.005045997,51.875423 ,1.073132221,-0.000995944,187.36 ,1.066861448,0.003802902,100.5 ,0.984216143,0.000751952,344.5 ,0.690125203,0.003323035,152.61 ,1.098406147,0.004520559,14.62 ,1.025943826,0.000442582,142.61 ,0.717279322,0.000217747,203.42 ,0.883875360,0.006611401,51.875423 ,0.993940550,0.003667151,8.793088 ,0.743267272,2639.963934,1.2");
 		System.out.println(c2.runR());
 
