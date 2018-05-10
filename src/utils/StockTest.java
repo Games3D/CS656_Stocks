@@ -205,14 +205,22 @@ public class StockTest {
 				if(!DATA.get("currency").toString().equals("USD")) 
 					cc=String.valueOf(CurrencyConverter.conversionRate((String)DATA.get("currency"), "USD")*Float.parseFloat(cc));
 
+				String open=DATA.get("regularMarketPrice").toString();
+				if(!DATA.get("currency").toString().equals("USD")) 
+					open=String.valueOf(CurrencyConverter.conversionRate((String)DATA.get("currency"), "USD")*Float.parseFloat(open));
+				
+				String close=DATA.get("regularMarketPreviousClose").toString();
+				if(!DATA.get("currency").toString().equals("USD")) 
+					close=String.valueOf(CurrencyConverter.conversionRate((String)DATA.get("currency"), "USD")*Float.parseFloat(close));
+				
 				out=new String(
 						DATA.get("symbol")+ "`" +
 								DATA.get("marketCap")+ "`" +
 								DATA.get("longName")+ "`" +
 								DATA.get("regularMarketOpen")+ "`" +
 								DATA.get("currency")+ "`" +
-								(CurrencyConverter.conversionRate((String)DATA.get("currency"), "USD")*Double.parseDouble(DATA.get("regularMarketPreviousClose").toString()))+ "`" +
-								(CurrencyConverter.conversionRate((String)DATA.get("currency"), "USD")*Double.parseDouble(DATA.get("regularMarketPrice").toString()))+ "`" +
+								close+ "`" +
+								open+ "`" +
 								cc);
 
 				//System.out.println(DATA.get("market"));
@@ -410,7 +418,7 @@ public class StockTest {
 		new Thread(foo).start();
 		
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(30000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -419,16 +427,16 @@ public class StockTest {
 		System.out.println(value);
 		
 		if (value.equals("BAD PARAMS")) {
-			return "BAD PARAMS";
+			return "BAD PARAMS|"+value+"|";
 		} else if (value.isEmpty()) {
-			return "TIME OUT";
+			return "JAVA TIME OUT|"+value+"|";
 		} else {
 			return value;
 		}
 	}
 
 	public static void main (String[] args) {
-		StockTest c = new StockTest("zeel.ns");
+		StockTest c = new StockTest("mmm");
 		System.out.println(c.firstBuy());
 		System.out.println(c.getQuote());
 		System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));

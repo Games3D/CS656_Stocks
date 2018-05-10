@@ -50,9 +50,10 @@ if(isset($_POST['importSubmit'])){
 		$rowSuma = mysqli_fetch_assoc( $resultSuma );
 //echo "asdfd".$rowSuma['aa']."|";
 		if ($rowSuma['aa'] >= 10){
-			$_SESSION["ERROR"] = 'You can`t buy more because you already have 10 stocks';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'You can`t buy more because you already have 10 stocks';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 					
 		
@@ -79,14 +80,16 @@ if(isset($_POST['importSubmit'])){
 		
 		echo "NSE:".$NSE."|DOW:".$DOW."|".$NSE/($NSE+$DOW);//<.30;
 		if (($NSE/($NSE+$DOW))>.35 && ($rowSuma['aa'] >= 7)){
-			$_SESSION["ERROR"] = 'Too much NSE stocks';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Too much NSE stocks';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		if (($DOW/($NSE+$DOW))>.75 && ($rowSuma['aa'] >= 7)){
-			$_SESSION["ERROR"] = 'Too much DOW stocks';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Too much DOW stocks';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		
 		
@@ -118,15 +121,17 @@ if(isset($_POST['importSubmit'])){
 			$result2 = $conn->query("SELECT count(*) as total FROM np397.SM_StockList where Symbol='".strtoupper($line[1])."';");
 			if (!$result2) {
 				die('Invalid query: ' . mysql_error());
-				$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-				header('Location: Error.php');
-				return;
+				//$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+				//header('Location: Error.php');
+				//return;
+				continue;
 			}
 			$row2 = $result2->fetch_assoc();
 			if ($row2['total']<=0){
-				$_SESSION["ERROR"] = 'Not a valid stock';
-				header('Location: Error.php');
-				return;
+				//$_SESSION["ERROR"] = 'Not a valid stock';
+				//header('Location: Error.php');
+				//return;
+				continue;
 			}
 		
 		$sss=$line[1];
@@ -142,9 +147,10 @@ if(isset($_POST['importSubmit'])){
 
 		//If $contents is not a boolean FALSE value.
 		if($contentsFirst == false){
-			$_SESSION["ERROR"] = 'Get request error';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Get request error';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$DATAFIRST = explode("`", $contentsFirst);
 
@@ -154,9 +160,10 @@ if(isset($_POST['importSubmit'])){
 
 		//If $contents is not a boolean FALSE value.
 		if($contents == false){
-			$_SESSION["ERROR"] = 'Get request error';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Get request error';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$DATA = explode("`", $contents);
 
@@ -171,35 +178,39 @@ if(isset($_POST['importSubmit'])){
 		$Currency=$DATA[4];
 		//echo "UNIT:".$unitPrice."|";
 		if ($unitPrice==0){
-			$_SESSION["ERROR"] = 'Bad Ticker';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Bad Ticker';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 			
 		//gets the user's balance
 		$result2 = $conn->query("SELECT Balance FROM np397.SM_Portfolio where Username='".$_SESSION["USER"]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 		if (!$result2) {
 			die('Invalid query: ' . mysql_error());
-			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$row2 = $result2->fetch_assoc();
 		$BALANCE=$row2['Balance'];
 
 		if (($line[2]*$unitPrice) > $BALANCE){
-			$_SESSION["ERROR"] = 'not enough funds to buy this stock';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'not enough funds to buy this stock';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 
 		//checks to see if the stock is ther already or not
 		$result2 = $conn->query("SELECT StockID FROM np397.SM_Stocks where StockSymbol='".$line[1]."' and portfolioID='".$_SESSION['CURPORTFOLIO']."';");
 		if (!$result2) {
 			die('Invalid query: ' . mysql_error());
-			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$row2 = $result2->fetch_assoc();
 		if ($row2['StockID'] != ""){//tests to see if the stock is there already or not
@@ -214,9 +225,10 @@ if(isset($_POST['importSubmit'])){
 			$result3 = $conn->query("SELECT StockID FROM np397.SM_Stocks where StockSymbol='".$line[1]."' and PortfolioID='".$_SESSION['CURPORTFOLIO']."';");
 			if (!$result3) {
 				die('Invalid query: ' . mysql_error());
-				$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-				header('Location: Error.php');
-				return;
+				//$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+				//header('Location: Error.php');
+				//return;
+				continue;
 			}
 			$row3 = $result3->fetch_assoc();
 
@@ -235,9 +247,10 @@ if(isset($_POST['importSubmit'])){
 		$result2 = $conn->query("select * from np397.SM_Stocks Where StockSymbol='".$line[1]."' and PortfolioID='".$_SESSION['CURPORTFOLIO']."';");
 		if (!$result2) {
 			die('Invalid query: ' . mysql_error());
-			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$row2 = $result2->fetch_assoc();
 
@@ -254,9 +267,10 @@ if(isset($_POST['importSubmit'])){
 		$result2 = $conn->query("select * from np397.SM_Stocks Where StockID='".$line[1]."';");
 		if (!$result2) {
 			die('Invalid query: ' . mysql_error());
-			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$row2 = $result2->fetch_assoc();
 
@@ -273,9 +287,10 @@ if(isset($_POST['importSubmit'])){
 	//	echo $contents;
 		//If $contents is not a boolean FALSE value.
 		if($contents == false){
-			$_SESSION["ERROR"] = 'Get request error';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Get request error';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$DATA = explode("`", $contents);
 echo print_r(array_values($DATA));
@@ -287,9 +302,10 @@ echo print_r(array_values($DATA));
 		$result2 = $conn->query("SELECT BankBalance FROM np397.SM_Users where Username='".$_SESSION["USER"]."';");
 		if (!$result2) {
 			die('Invalid query: ' . mysql_error());
-			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$row2 = $result2->fetch_assoc();
 		$BALANCE=$row2['BankBalance'];
@@ -298,16 +314,18 @@ echo print_r(array_values($DATA));
 		$result2 = $conn->query("select sum(ShareQuantity) as aa from np397.SM_Transaction Where StockID='".$line[1]."';");
 		if (!$result2) {
 			die('Invalid query: ' . mysql_error());
-			$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'Invalid query: ' . mysql_error();
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 		$row2 = $result2->fetch_assoc();
 
 		if ($row2['aa']<$SHARES || ($row2['aa']-$SHARES)<0){
-			$_SESSION["ERROR"] = 'not enough shares to sell';
-			header('Location: Error.php');
-			return;
+			//$_SESSION["ERROR"] = 'not enough shares to sell';
+			//header('Location: Error.php');
+			//return;
+			continue;
 		}
 
 		$conn->query("INSERT INTO np397.SM_Transaction (StockID, ShareQuantity, UnitPrice, Timestamp) VALUES ('".$line[1]."', '-".$SHARES."', '".$unitPrice."', CURRENT_TIMESTAMP);");
@@ -323,7 +341,7 @@ echo print_r(array_values($DATA));
 			$conn->query("DELETE from np397.SM_Stocks where StockID='".$line[1]."';");
 		}
 		
-		header("Location: portfolio.php");
+		//header("Location: portfolio.php");
 				} else{
 					echo "ERROR";
 				}
@@ -331,7 +349,7 @@ echo print_r(array_values($DATA));
             //close opened csv file
             fclose($csvFile);
 		  
-			header("Location: functions.php");
+			//header("Location: functions.php");
 			$qstring = '?status=succ';
         }else{
             $qstring = '?status=err';
