@@ -18,7 +18,7 @@ while($row = $result->fetch_assoc()){
 	if($row["ER"] == null){
 		$url .= "0,";
     } else {
-		$url .= round($row["ER"],2).','.round($_SESSION['finalarray'][$counter],2).','.round($row["Beta"],2).',';
+		$url .= $row["ER"].','.$_SESSION['finalarray'][$counter].','.$row["Beta"].',';
     	$counter=$counter+1;
 	}
 }

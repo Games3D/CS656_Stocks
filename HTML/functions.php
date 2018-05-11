@@ -79,13 +79,13 @@ if(isset($_POST['importSubmit'])){
 		$NSE=$row22['aa'];
 		
 		echo "NSE:".$NSE."|DOW:".$DOW."|".$NSE/($NSE+$DOW);//<.30;
-		if (($NSE/($NSE+$DOW))>.35 && ($rowSuma['aa'] >= 7)){
+		if ((($NSE/($NSE+$DOW))>.35 && ($rowSuma['aa'] >= 7)) && $NSE_DOW=="NSE"){
 			//$_SESSION["ERROR"] = 'Too much NSE stocks';
 			//header('Location: Error.php');
 			//return;
 			continue;
 		}
-		if (($DOW/($NSE+$DOW))>.75 && ($rowSuma['aa'] >= 7)){
+		if ((($DOW/($NSE+$DOW))>.75 && ($rowSuma['aa'] >= 7)) && $NSE_DOW=="DOW"){
 			//$_SESSION["ERROR"] = 'Too much DOW stocks';
 			//header('Location: Error.php');
 			//return;

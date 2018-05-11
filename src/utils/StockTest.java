@@ -436,7 +436,7 @@ public class StockTest {
 	}
 
 	public static void main (String[] args) {
-		StockTest c = new StockTest("mmm");
+		StockTest c = new StockTest("ge");
 		System.out.println(c.firstBuy());
 		System.out.println(c.getQuote());
 		System.out.println(CurrencyConverter.conversionRate("CHF", "USD"));
